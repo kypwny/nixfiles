@@ -1,0 +1,8 @@
+/result
+/result-*
+*.swp
+*~
+.agents/
+nixos-config/
+skills-lock.json
+AGENTS.md
