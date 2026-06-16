@@ -2,20 +2,27 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ config, lib, pkgs, llm-agents, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  llm-agents,
+  ...
+}:
 
 let
   llmAgentsPkgs = llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
 in
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      ./services/hermes.nix
-      ./containers/minecraft.nix
-      ./containers/eepsite.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    ./services/hermes.nix
+    ./containers/minecraft.nix
+    ./containers/eepsite.nix
+    ./containers/ascii.nix
+  ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -123,17 +130,20 @@ in
     isNormalUser = true;
     shell = pkgs.fish;
     extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-    packages = with pkgs; [
-      tree
-      fastfetch
-      pfetch-rs
-      btop
-    ] ++ (with llmAgentsPkgs; [
-      omp
-      openskills
-      skills
-      skills-installer
-    ]);
+    packages =
+      with pkgs;
+      [
+        tree
+        fastfetch
+        pfetch-rs
+        btop
+      ]
+      ++ (with llmAgentsPkgs; [
+        omp
+        openskills
+        skills
+        skills-installer
+      ]);
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILrGOBlnxXx7U52BuS+M2swzKufwu1A76RyjfHK8w48A pwny"
     ];
@@ -162,7 +172,7 @@ in
 
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
-environment.systemPackages = with pkgs; [
+  environment.systemPackages = with pkgs; [
     vim
     wget
     curl
@@ -175,7 +185,10 @@ environment.systemPackages = with pkgs; [
 
   environment.localBinInPath = true;
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
   nix.settings.accept-flake-config = true;
   nix.settings.substituters = [ "https://cache.numtide.com" ];
   nix.settings.trusted-public-keys = [
@@ -194,7 +207,6 @@ environment.systemPackages = with pkgs; [
   };
 
   # List services that you want to enable:
-
 
   services.openssh = {
     enable = true;
@@ -236,5 +248,7 @@ environment.systemPackages = with pkgs; [
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "26.05"; # Did you read the comment?
+  sops.defaultSopsFile = ./secrets/secrets.yaml;
+  sops.secrets."caddy_env" = { };
 
 }
