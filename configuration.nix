@@ -2,12 +2,17 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, llm-agents, ... }:
+
+let
+  llmAgentsPkgs = llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
+in
 
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ./services/hermes.nix
       ./containers/minecraft.nix
       ./containers/eepsite.nix
     ];
@@ -120,7 +125,15 @@
     extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
     packages = with pkgs; [
       tree
-    ];
+      fastfetch
+      pfetch-rs
+      btop
+    ] ++ (with llmAgentsPkgs; [
+      omp
+      openskills
+      skills
+      skills-installer
+    ]);
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILrGOBlnxXx7U52BuS+M2swzKufwu1A76RyjfHK8w48A pwny"
     ];
@@ -149,18 +162,24 @@
 
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
-  environment.systemPackages = with pkgs; [
+environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
     curl
     git
     aria2
     bubblewrap
+    nil
   ];
 
   environment.localBinInPath = true;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.accept-flake-config = true;
+  nix.settings.substituters = [ "https://cache.numtide.com" ];
+  nix.settings.trusted-public-keys = [
+    "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
+  ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
