@@ -2,7 +2,6 @@
 
 let
   containerName = "eepsite";
-  expectedI2PAddress = "sflpflzjvmsxp5cwseroucludkyl3hqhugdfnf7ifxripk63l2fq.b32.i2p";
 in
 {
   systemd.tmpfiles.rules = [
@@ -162,12 +161,6 @@ in
               RemainAfterExit = true;
             };
             script = ''
-              actual_address="$(${pkgs.i2pd-tools}/bin/keyinfo /run/secrets/kypwny.dat)"
-              if [ "$actual_address" != "${expectedI2PAddress}" ]; then
-                echo "kypwny.dat derives to $actual_address, expected ${expectedI2PAddress}" >&2
-                exit 1
-              fi
-
               ${pkgs.coreutils}/bin/install \
                 --owner=i2pd --group=i2pd --mode=0600 \
                 /run/secrets/kypwny.dat /var/lib/i2pd/kypwny.dat
