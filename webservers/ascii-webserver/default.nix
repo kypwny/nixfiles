@@ -1,7 +1,7 @@
 { lib, ... }:
 
 let
-  containerName = "ascii";
+  containerName = "ascii-webserver";
 in
 {
   containers.${containerName} = {
@@ -11,8 +11,8 @@ in
     localAddress = "192.168.1.53/24";
 
     bindMounts = {
-      "/srv/ascii.txt" = {
-        hostPath = "/home/ky/nixos-config/ascii.txt";
+      "/srv/ascii/ascii.txt" = {
+        hostPath = "/home/ky/nixos-config/webservers/ascii-webserver/ascii.txt";
         isReadOnly = true;
       };
       "/run/secrets/caddy_env" = {
@@ -23,6 +23,9 @@ in
 
     config =
       { pkgs, ... }:
+      let
+        asciiHtmlDir = pkgs.writeTextDir "ascii.html" (builtins.readFile ./ascii.html);
+      in
       {
         networking = {
           hostName = containerName;
@@ -46,10 +49,20 @@ in
           environmentFile = "/run/secrets/caddy_env";
           virtualHosts."{$DOMAIN}" = {
             extraConfig = ''
-              root * /srv
-              rewrite / /ascii.txt
-              header Content-Type "text/plain; charset=utf-8"
-              file_server
+              @cli header_regexp User-Agent (?i)(curl|wget)
+
+              handle @cli {
+                header Content-Type "text/plain; charset=utf-8"
+                root * /srv
+                rewrite * /ascii/ascii.txt
+                file_server
+              }
+
+              handle {
+                root * ${asciiHtmlDir}
+                rewrite * /ascii.html
+                file_server
+              }
             '';
           };
         };
