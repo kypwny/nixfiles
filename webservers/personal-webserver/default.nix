@@ -1,7 +1,7 @@
 { lib, ... }:
 
 let
-  containerName = "eepsite";
+  containerName = "personal-webserver";
 in
 {
   systemd.tmpfiles.rules = [

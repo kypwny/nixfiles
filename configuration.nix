@@ -19,9 +19,10 @@ in
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./services/hermes.nix
+    ./services/motd.nix
     ./containers/minecraft.nix
-    ./containers/eepsite.nix
-    ./containers/ascii.nix
+    ./webservers/personal-webserver
+    ./webservers/ascii-webserver
   ];
 
   # Use the systemd-boot EFI boot loader.
@@ -153,6 +154,7 @@ in
     enable = true;
 
     interactiveShellInit = ''
+      set fish_greeting
       fish_config theme choose catppuccin-mocha --color-theme=dark >/dev/null 2>&1
     '';
   };
