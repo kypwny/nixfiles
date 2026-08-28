@@ -41,7 +41,7 @@
       "github"
       "ollama-app"
       "qbittorrent"
-      "vscodium"
+      "zed"
     ];
   };
 }
