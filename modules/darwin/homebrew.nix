@@ -37,11 +37,38 @@
     ];
 
     casks = [
+      "affinity"
       "blackhole-2ch"
+      "brave-browser"
+      "burp-suite"
+      "discord"
+      "freecad"
       "github"
+      "keepassxc"
+      "kicad"
+      "netnewswire"
+      "obs"
+      "obsidian"
       "ollama-app"
+      "prismlauncher"
+      "protonvpn"
       "qbittorrent"
+      "roblox"
+      "steam"
+      "telegram"
+      "ultimaker-cura"
+      "utm"
+      "vivaldi"
+      "waves-central"
+      "whatsapp"
       "zed"
     ];
+
+    masApps = {
+      "BeagleIM" = 1445349494;
+      "Monal" = 1637078500;
+      "The Unarchiver" = 425424353;
+      "WutheringWaves" = 6475033368;
+    };
   };
 }
