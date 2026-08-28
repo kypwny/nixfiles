@@ -21,6 +21,8 @@
     mac-app-util.url = "github:hraban/mac-app-util";
     llm-agents.url = "github:numtide/llm-agents.nix";
     nix-minecraft.url = "github:Infinidoge/nix-minecraft";
+    catppuccin.url = "github:catppuccin/nix";
+    catppuccin.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =

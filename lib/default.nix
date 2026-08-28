@@ -6,6 +6,7 @@ let
     home-manager
     sops-nix
     mac-app-util
+    catppuccin
     ;
 in
 {
@@ -39,6 +40,7 @@ in
         ../modules/nixos
         (../hosts + "/${hostname}")
         sops-nix.nixosModules.sops
+        catppuccin.nixosModules.catppuccin
         home-manager.nixosModules.home-manager
         {
           home-manager = {
@@ -83,6 +85,7 @@ in
         ../modules/darwin
         (../hosts + "/${hostname}")
         mac-app-util.darwinModules.default
+        catppuccin.darwinModules.catppuccin
         home-manager.darwinModules.home-manager
         {
           home-manager = {
@@ -93,6 +96,7 @@ in
             sharedModules = [
               mac-app-util.homeManagerModules.default
               sops-nix.homeManagerModules.sops
+              catppuccin.homeModules.catppuccin
             ];
             users.${username} = import homeFile;
           };
