@@ -1,22 +1,30 @@
-{ lib, ... }:
+{
+  config,
+  lib,
+  vars,
+  ...
+}:
 
 let
-  containerName = "ascii-webserver";
+  container = vars.containers.asciiWebserver;
+  containerName = container.name;
 in
 {
+  sops.secrets."caddy_env".restartUnits = [ "container@${containerName}.service" ];
+
   containers.${containerName} = {
     autoStart = true;
     privateNetwork = true;
-    hostBridge = "br0";
-    localAddress = "192.168.1.53/24";
+    hostBridge = vars.network.bridge;
+    localAddress = container.cidr;
 
     bindMounts = {
       "/srv/ascii/ascii.txt" = {
-        hostPath = "/home/ky/nixos-config/webservers/ascii-webserver/ascii.txt";
+        hostPath = "${vars.paths.repo}/modules/containers/ascii-webserver/ascii.txt";
         isReadOnly = true;
       };
-      "/run/secrets/caddy_env" = {
-        hostPath = "/run/secrets/caddy_env";
+      "${config.sops.secrets."caddy_env".path}" = {
+        hostPath = config.sops.secrets."caddy_env".path;
         isReadOnly = true;
       };
     };
@@ -29,12 +37,9 @@ in
       {
         networking = {
           hostName = containerName;
-          defaultGateway = "192.168.1.1";
+          defaultGateway = vars.network.gateway;
           useHostResolvConf = lib.mkForce false;
-          nameservers = [
-            "1.1.1.1"
-            "9.9.9.9"
-          ];
+          nameservers = vars.network.containerNameservers;
           firewall = {
             enable = true;
             allowedTCPPorts = [
@@ -46,10 +51,16 @@ in
 
         services.caddy = {
           enable = true;
-          environmentFile = "/run/secrets/caddy_env";
+          environmentFile = config.sops.secrets."caddy_env".path;
           virtualHosts."{$DOMAIN}" = {
             extraConfig = ''
               @cli header_regexp User-Agent (?i)(curl|wget)
+
+              redir /jellyfin /jellyfin/ 308
+
+              handle /jellyfin/* {
+                reverse_proxy ${vars.network.hostAddress}:8096
+              }
 
               handle @cli {
                 header Content-Type "text/plain; charset=utf-8"
@@ -67,7 +78,7 @@ in
           };
         };
 
-        system.stateVersion = "26.05";
+        system.stateVersion = vars.host.stateVersion;
       };
   };
 }

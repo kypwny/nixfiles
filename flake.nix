@@ -1,5 +1,6 @@
 {
-  description = "NixOS configuration for blackbox";
+  description = "Multi-host NixOS and nix-darwin configuration";
+
   nixConfig = {
     extra-substituters = [ "https://cache.numtide.com" ];
     extra-trusted-public-keys = [
@@ -9,24 +10,83 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    hermes-agent.url = "github:NousResearch/hermes-agent";
-    llm-agents.url = "github:numtide/llm-agents.nix";
-    nix-minecraft.url = "github:Infinidoge/nix-minecraft";
+    nix-darwin.url = "github:nix-darwin/nix-darwin/master";
+    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager.url = "github:nix-community/home-manager";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    treefmt-nix.url = "github:numtide/treefmt-nix";
+    treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
+    mac-app-util.url = "github:hraban/mac-app-util";
+    llm-agents.url = "github:numtide/llm-agents.nix";
+    nix-minecraft.url = "github:Infinidoge/nix-minecraft";
   };
 
-  outputs = { nixpkgs, hermes-agent, llm-agents, nix-minecraft, sops-nix, ... }: {
-    nixosConfigurations.blackbox = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = {
-        inherit hermes-agent llm-agents nix-minecraft;
-      };
-      modules = [
-        hermes-agent.nixosModules.default
-        ./configuration.nix
-        sops-nix.nixosModules.sops
+  outputs =
+    {
+      self,
+      nixpkgs,
+      treefmt-nix,
+      ...
+    }@inputs:
+    let
+      outputs = self;
+      mylib = import ./lib { inherit inputs outputs; };
+      systems = [
+        "x86_64-linux"
+        "aarch64-darwin"
       ];
+      forEachSystem = nixpkgs.lib.genAttrs systems;
+      treefmtEval = forEachSystem (
+        system: treefmt-nix.lib.evalModule nixpkgs.legacyPackages.${system} ./treefmt.nix
+      );
+    in
+    {
+      lib = mylib;
+
+      nixosConfigurations = {
+        snowbox = mylib.mkNixos {
+          hostname = "snowbox";
+          username = "ky";
+          system = "x86_64-linux";
+        };
+      };
+
+      darwinConfigurations = {
+        yoru = mylib.mkDarwin {
+          hostname = "yoru";
+          username = "ky";
+          system = "aarch64-darwin";
+        };
+      };
+
+      formatter = forEachSystem (system: treefmtEval.${system}.config.build.wrapper);
+
+      checks = forEachSystem (system: {
+        formatting = treefmtEval.${system}.config.build.check self;
+      });
+
+      devShells = forEachSystem (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
+          default = pkgs.mkShell {
+            packages = with pkgs; [
+              nixfmt
+              nil
+              statix
+              deadnix
+              nh
+              just
+              sops
+              age
+              ssh-to-age
+            ];
+          };
+        }
+      );
     };
-  };
 }
