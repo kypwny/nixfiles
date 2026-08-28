@@ -8,17 +8,40 @@
     };
 
     taps = [
-      "homebrew/services"
+      "can1357/tap"
     ];
 
     brews = [
       "mas"
+      "bun"
+      "can1357/tap/omp"
+      "cmake"
+      "dnscrypt-proxy"
+      "dnsmasq"
+      "docker"
+      "docker-compose"
+      "flashrom"
+      "go"
+      "gopls"
+      "libimobiledevice"
+      "mpv"
+      "neovim"
+      "openssh"
+      "rojo"
+      "sigrok-cli"
+      "tree"
+      "uv"
+      "vips"
+      "ykman"
+      "zxing-cpp"
     ];
 
     casks = [
-      "ghostty"
-      "visual-studio-code"
-      "firefox"
+      "blackhole-2ch"
+      "github"
+      "ollama-app"
+      "qbittorrent"
+      "vscodium"
     ];
   };
 }

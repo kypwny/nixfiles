@@ -8,9 +8,7 @@
 
   system.defaults = {
     dock = {
-      autohide = true;
-      autohide-delay = 0.0;
-      autohide-time-modifier = 0.2;
+      autohide = false;
       tilesize = 48;
       mineffect = "scale";
       minimize-to-application = true;
