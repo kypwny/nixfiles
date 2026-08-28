@@ -56,6 +56,7 @@
       "protonvpn"
       "qbittorrent"
       "roblox"
+      "signal"
       "simplex"
       "steam"
       "telegram"
