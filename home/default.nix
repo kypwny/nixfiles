@@ -24,7 +24,7 @@
   ];
 
   home.sessionVariables = {
-    MANPAGER = "sh -c 'col -bx | bat -l man -p'";
+    MANPAGER = "sh -c 'col -bx | bat -l man -p --paging=always'";
     MANROFFOPT = "-c";
   };
 
