@@ -39,6 +39,7 @@
     casks = [
       "affinity"
       "blackhole-2ch"
+      "blender"
       "brave-browser"
       "burp-suite"
       "discord"
@@ -46,6 +47,7 @@
       "github"
       "keepassxc"
       "kicad"
+      "lulu"
       "netnewswire"
       "obs"
       "obsidian"
@@ -54,6 +56,7 @@
       "protonvpn"
       "qbittorrent"
       "roblox"
+      "simplex"
       "steam"
       "telegram"
       "ultimaker-cura"
