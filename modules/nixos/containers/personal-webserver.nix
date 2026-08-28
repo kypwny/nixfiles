@@ -1,32 +1,33 @@
-{ lib, ... }:
+{ lib, vars, ... }:
 
 let
-  containerName = "personal-webserver";
+  container = vars.containers.personalWebserver;
+  containerName = container.name;
 in
 {
   systemd.tmpfiles.rules = [
-    "z /home/ky/webserver/kypwny.dat 0600 ky users - -"
-    "z /home/ky/webserver/wireguard/wg0.conf 0600 ky users - -"
+    "z ${vars.paths.i2pKey} 0600 ${vars.user.name} ${vars.user.group} - -"
+    "z ${vars.paths.wireguardConfig} 0600 ${vars.user.name} ${vars.user.group} - -"
   ];
 
   containers.${containerName} = {
     autoStart = true;
     privateNetwork = true;
-    hostBridge = "br0";
-    localAddress = "192.168.1.51/24";
+    hostBridge = vars.network.bridge;
+    localAddress = container.cidr;
     enableTun = true;
 
     bindMounts = {
       "/run/secrets/kypwny.dat" = {
-        hostPath = "/home/ky/webserver/kypwny.dat";
+        hostPath = vars.paths.i2pKey;
         isReadOnly = true;
       };
       "/run/secrets/wg0.conf" = {
-        hostPath = "/home/ky/webserver/wireguard/wg0.conf";
+        hostPath = vars.paths.wireguardConfig;
         isReadOnly = true;
       };
       "/srv/www/kypwny" = {
-        hostPath = "/home/ky/webroot/dist";
+        hostPath = vars.paths.webroot;
         isReadOnly = true;
       };
     };
@@ -37,12 +38,9 @@ in
         networking = {
           hostName = containerName;
           enableIPv6 = true;
-          defaultGateway = "192.168.1.1";
+          defaultGateway = vars.network.gateway;
           useHostResolvConf = lib.mkForce false;
-          nameservers = [
-            "1.1.1.1"
-            "9.9.9.9"
-          ];
+          nameservers = vars.network.containerNameservers;
 
           wg-quick.interfaces.wg0.configFile = "/run/secrets/wg0.conf";
 
@@ -179,7 +177,7 @@ in
           ];
         };
 
-        system.stateVersion = "26.05";
+        system.stateVersion = vars.host.stateVersion;
       };
   };
 }

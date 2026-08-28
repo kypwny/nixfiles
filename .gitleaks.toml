@@ -1,0 +1,14 @@
+title = "Gitleaks configuration"
+
+[allowlist]
+description = "Global allowlist"
+paths = [
+  '''^\.sops\.yaml$''',
+  '''^secrets/.*\.yaml$''',
+  '''^flake\.lock$'''
+]
+regexes = [
+  '''ENC\[AES256_GCM,data:''',
+  '''age1[0-9a-z]{58}''',
+  '''ssh-ed25519 AAAAC3NzaC1lZDI1NTE5[0-9A-Za-z+/]+'''
+]

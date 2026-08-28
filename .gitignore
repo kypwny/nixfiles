@@ -6,3 +6,17 @@
 nixos-config/
 skills-lock.json
 AGENTS.md
+
+# Secrets and keys
+keys.txt
+**/age/keys.txt
+AGE-SECRET-KEY-*
+.netrc
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# OS / Editor / Direnv
+.DS_Store
+.direnv/
