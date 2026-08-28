@@ -48,6 +48,10 @@ in
             useUserPackages = true;
             backupFileExtension = "hm-backup";
             extraSpecialArgs = specialArgs;
+            sharedModules = [
+              sops-nix.homeManagerModules.sops
+              catppuccin.homeModules.catppuccin
+            ];
             users.${username} = import homeFile;
           };
         }

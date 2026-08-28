@@ -23,6 +23,11 @@
     "$HOME/bin"
   ];
 
+  home.sessionVariables = {
+    MANPAGER = "sh -c 'col -bx | bat -l man -p'";
+    MANROFFOPT = "-c";
+  };
+
   programs.home-manager.enable = true;
 
   programs.git = {
@@ -78,12 +83,24 @@
   };
 
   programs.ripgrep.enable = true;
-  programs.bat.enable = true;
+
+  programs.bat = {
+    enable = true;
+    config = {
+      paging = "never";
+    };
+  };
+
+  programs.btop = {
+    enable = true;
+  };
+
   programs.eza = {
     enable = true;
     enableZshIntegration = true;
     icons = "auto";
   };
+
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
