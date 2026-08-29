@@ -51,7 +51,7 @@
     enable = true;
     enableSSHSupport = true;
     settings = {
-      allow-loopback-pinentry = true;
+      allow-loopback-pinentry = "";
     };
   };
 }

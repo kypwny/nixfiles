@@ -82,7 +82,6 @@ let
         printf 'placeholder: %s\n' "$([[ "$placeholder_enabled" == '1' ]] && printf enabled || printf disabled)"
         printf 'container: %s\n' "$container_name"
         printf 'LAN address: %s\n' "$container_address"
-        printf 'mount: %s\n' "$mount_point"
         printf 'host data root: %s\n' "$host_data_root"
         printf 'WebUI: http://%s:%s\n' "$container_address" "$qb_webui_port"
         printf 'WebUI credentials env: %s\n' "$qb_webui_env_path"
