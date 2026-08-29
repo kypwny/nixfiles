@@ -33,9 +33,21 @@
 
   programs.git = {
     enable = true;
-    settings.user = {
-      name = "ky";
-      email = "ky@tilde.horse";
+    settings = {
+      user = {
+        name = "ky";
+        email = "ky@tilde.horse";
+        signingkey = "~/.ssh/ky.pub";
+      };
+      gpg = {
+        format = "ssh";
+      };
+      commit = {
+        gpgsign = true;
+      };
+      tag = {
+        gpgsign = true;
+      };
     };
   };
 
