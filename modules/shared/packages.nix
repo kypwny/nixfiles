@@ -12,5 +12,6 @@
     fastfetch
     btop
     nil
+    sbcl
   ];
 }
