@@ -16,14 +16,22 @@ personal nixos and nix-darwin configurations managed via flakes and home-manager
 
 ## usage
 
-### macos (yoru)
+### via just
 
 ```bash
-nix run nix-darwin -- switch --flake .#yoru
+just switch   # rebuilds and switches system config
+just build    # builds system config
+just check    # run flake checks
+just fmt      # format nix files
+just update   # update flake inputs
 ```
 
-### nixos (snowbox)
+### direct
 
 ```bash
+# macos (yoru)
+nix run nix-darwin -- switch --flake .#yoru
+
+# nixos (snowbox)
 sudo nixos-rebuild switch --flake .#snowbox
 ```
