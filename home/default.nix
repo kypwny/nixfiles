@@ -12,6 +12,7 @@
   # Global Catppuccin Mocha theme for home-manager tools
   catppuccin = {
     enable = true;
+    autoEnable = true;
     flavor = "mocha";
     accent = "blue";
   };

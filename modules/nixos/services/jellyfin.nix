@@ -113,13 +113,14 @@ in
     before = [ "jellyfin.service" ];
     serviceConfig.Type = "oneshot";
     # Mount-on-demand: touching the path triggers the automount, then we
-    # create any missing media dirs.
+    # create any missing media dirs if the device is present and mounted.
     script = ''
-      ${pkgs.coreutils}/bin/touch ${lib.escapeShellArg mediaRoot}
-      ${lib.concatMapStringsSep "\n" (
-        dir:
-        "${pkgs.coreutils}/bin/install -d -o ${vars.user.name} -g ${vars.user.group} -m 0755 ${lib.escapeShellArg "${mediaRoot}/${dir}"}"
-      ) mediaDirs}
+      if ${pkgs.coreutils}/bin/touch ${lib.escapeShellArg mediaRoot} 2>/dev/null; then
+        ${lib.concatMapStringsSep "\n" (
+          dir:
+          "${pkgs.coreutils}/bin/install -d -o ${vars.user.name} -g ${vars.user.group} -m 0755 ${lib.escapeShellArg "${mediaRoot}/${dir}"}"
+        ) mediaDirs}
+      fi
     '';
   };
 
