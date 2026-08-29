@@ -1,5 +1,5 @@
 {
   imports = [
-    ./hosts/snowbox
+    ./hosts/kura
   ];
 }

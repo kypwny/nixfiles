@@ -1,19 +1,19 @@
 # NixOS Config Layout
 
-This repo is organized around one active host, `snowbox`, with shared values
+This repo is organized around one active host, `kura`, with shared values
 kept close to that host.
 
 ## Entry Points
 
-- `flake.nix` defines `nixosConfigurations.snowbox`.
-- `hosts/snowbox/default.nix` is the main host module imported by the flake.
-- `configuration.nix` is a compatibility shim that imports `hosts/snowbox`.
-- `hosts/snowbox/hardware-configuration.nix` is generated; move or import it,
+- `flake.nix` defines `nixosConfigurations.kura`.
+- `hosts/kura/default.nix` is the main host module imported by the flake.
+- `configuration.nix` is a compatibility shim that imports `hosts/kura`.
+- `hosts/kura/hardware-configuration.nix` is generated; move or import it,
   but avoid hand-editing its hardware scan output.
 
 ## Shared Values
 
-Put host-local constants in `hosts/snowbox/vars.nix` when multiple modules need
+Put host-local constants in `hosts/kura/vars.nix` when multiple modules need
 them. This includes the admin user, LAN bridge, gateway, host and container IPs,
 common container DNS, state version, and external host paths.
 
@@ -34,7 +34,7 @@ Run validation from the repo root:
 
 ```bash
 nix flake check
-sudo nixos-rebuild build --flake .#snowbox
+sudo nixos-rebuild build --flake .#kura
 ```
 
 Use `switch` only after inspecting the diff and confirming the build.

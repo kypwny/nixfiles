@@ -8,7 +8,7 @@ let
 in
 {
   host = {
-    name = "snowbox";
+    name = "kura";
     system = "x86_64-linux";
     inherit stateVersion;
   };
