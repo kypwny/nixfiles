@@ -38,6 +38,10 @@
     };
   };
 
+  programs.gh = {
+    enable = true;
+  };
+
   # Disable starship in favor of minimal custom prompt
   programs.starship.enable = false;
 
