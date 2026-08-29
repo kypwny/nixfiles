@@ -7,14 +7,14 @@ on:
       - main
 
 jobs:
-  eval-snowbox:
+  eval-kura:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
       - uses: DeterminateSystems/magic-nix-cache-action@main
-      - name: Evaluate Snowbox
-        run: nix eval .#nixosConfigurations.snowbox.config.system.build.toplevel.drvPath
+      - name: Evaluate Kura
+        run: nix eval .#nixosConfigurations.kura.config.system.build.toplevel.drvPath
 
   eval-yoru:
     runs-on: ubuntu-latest

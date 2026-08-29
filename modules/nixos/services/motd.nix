@@ -65,11 +65,11 @@ let
       lib.concatMapStringsSep "\n" (service: "${service.label}|${service.unit}") services + "\n"
     );
 
-  hostServiceFile = mkServiceFile "snowbox-motd-host-services" hostServices;
-  containerServiceFile = mkServiceFile "snowbox-motd-containers" containerServices;
+  hostServiceFile = mkServiceFile "kura-motd-host-services" hostServices;
+  containerServiceFile = mkServiceFile "kura-motd-containers" containerServices;
 
-  snowboxMotd = pkgs.writeShellApplication {
-    name = "snowbox-motd";
+  kuraMotd = pkgs.writeShellApplication {
+    name = "kura-motd";
 
     runtimeInputs = with pkgs; [
       coreutils
@@ -390,9 +390,9 @@ let
   posixLoginHook = ''
     case "$-" in
       *i*)
-        if [ -t 1 ] && [ -z "''${SNOWBOX_MOTD_SHOWN:-}" ]; then
-          export SNOWBOX_MOTD_SHOWN=1
-          ${lib.getExe snowboxMotd}
+        if [ -t 1 ] && [ -z "''${KURA_MOTD_SHOWN:-}" ]; then
+          export KURA_MOTD_SHOWN=1
+          ${lib.getExe kuraMotd}
         fi
         ;;
     esac
@@ -406,20 +406,20 @@ in
   services.openssh.settings.PrintMotd = lib.mkForce false;
 
   environment.systemPackages = [
-    snowboxMotd
+    kuraMotd
   ];
 
   programs.bash.loginShellInit = posixLoginHook;
   programs.zsh.loginShellInit = ''
-    if [[ -o interactive && -t 1 && -z "''${SNOWBOX_MOTD_SHOWN:-}" ]]; then
-      export SNOWBOX_MOTD_SHOWN=1
-      ${lib.getExe snowboxMotd}
+    if [[ -o interactive && -t 1 && -z "''${KURA_MOTD_SHOWN:-}" ]]; then
+      export KURA_MOTD_SHOWN=1
+      ${lib.getExe kuraMotd}
     fi
   '';
   programs.fish.loginShellInit = ''
-    if status is-interactive; and test -t 1; and not set -q SNOWBOX_MOTD_SHOWN
-      set -gx SNOWBOX_MOTD_SHOWN 1
-      ${lib.getExe snowboxMotd}
+    if status is-interactive; and test -t 1; and not set -q KURA_MOTD_SHOWN
+      set -gx KURA_MOTD_SHOWN 1
+      ${lib.getExe kuraMotd}
     end
   '';
 }

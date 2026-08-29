@@ -1,9 +1,9 @@
 keys:
-  - &snowbox age1pgwygz4m4fslsqz4ufkdgy09r3dkfuwzn7s72frnfy2893hhwaus0ytk82
+  - &kura age1pgwygz4m4fslsqz4ufkdgy09r3dkfuwzn7s72frnfy2893hhwaus0ytk82
   - &admin age1pgwygz4m4fslsqz4ufkdgy09r3dkfuwzn7s72frnfy2893hhwaus0ytk82
 creation_rules:
   - path_regex: secrets/.*\.yaml$
     key_groups:
       - age:
-          - *snowbox
+          - *kura
           - *admin

@@ -48,8 +48,8 @@
       lib = mylib;
 
       nixosConfigurations = {
-        snowbox = mylib.mkNixos {
-          hostname = "snowbox";
+        kura = mylib.mkNixos {
+          hostname = "kura";
           username = "ky";
           system = "x86_64-linux";
         };

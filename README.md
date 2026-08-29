@@ -4,7 +4,7 @@ personal nixos and nix-darwin configurations managed via flakes and home-manager
 
 ## hosts
 
-- **snowbox**: nixos server (x86_64-linux)
+- **kura**: nixos server (x86_64-linux)
 - **yoru**: macbook pro (aarch64-darwin)
 
 ## structure
@@ -32,6 +32,6 @@ just update   # update flake inputs
 # macos (yoru)
 nix run nix-darwin -- switch --flake .#yoru
 
-# nixos (snowbox)
-sudo nixos-rebuild switch --flake .#snowbox
+# nixos (kura)
+sudo nixos-rebuild switch --flake .#kura
 ```
