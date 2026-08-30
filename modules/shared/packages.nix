@@ -13,5 +13,6 @@
     btop
     nil
     sbcl
+    lftp
   ];
 }
