@@ -1,7 +1,7 @@
 let
   adminUser = "ky";
   adminHome = "/home/${adminUser}";
-  repoRoot = "${adminHome}/nixos-config";
+  repoRoot = "${adminHome}/nixfiles";
   stateVersion = "26.05";
   lanPrefixLength = 24;
   mkCidr = address: "${address}/${toString lanPrefixLength}";
