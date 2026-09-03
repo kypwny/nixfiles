@@ -1,8 +1,17 @@
-{ lib, vars, ... }:
+{
+  inputs,
+  lib,
+  vars,
+  ...
+}:
 
 let
   container = vars.containers.personalWebserver;
   containerName = container.name;
+
+  # Docroot is the site build itself, not a mutable dir rsynced into.
+  # hostPath is types.str, so interpolate -- a bare drv fails the type check.
+  siteRoot = "${inputs.kypwny-site.packages.${vars.host.system}.default}";
 in
 {
   systemd.tmpfiles.rules = [
@@ -27,7 +36,7 @@ in
         isReadOnly = true;
       };
       "/srv/www/kypwny" = {
-        hostPath = vars.paths.webroot;
+        hostPath = siteRoot;
         isReadOnly = true;
       };
     };
