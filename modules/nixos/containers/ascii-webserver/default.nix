@@ -20,7 +20,7 @@ in
 
     bindMounts = {
       "/srv/ascii/ascii.txt" = {
-        hostPath = "${vars.paths.repo}/modules/containers/ascii-webserver/ascii.txt";
+        hostPath = "${./ascii.txt}";
         isReadOnly = true;
       };
       "${config.sops.secrets."caddy_env".path}" = {
