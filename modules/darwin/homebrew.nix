@@ -13,27 +13,11 @@
 
     brews = [
       "mas"
-      "bun"
       "can1357/tap/omp"
-      "cmake"
       "dnscrypt-proxy"
       "dnsmasq"
       "docker"
       "docker-compose"
-      "flashrom"
-      "go"
-      "gopls"
-      "libimobiledevice"
-      "mpv"
-      "neovim"
-      "openssh"
-      "rojo"
-      "sigrok-cli"
-      "tree"
-      "uv"
-      "vips"
-      "ykman"
-      "zxing-cpp"
     ];
 
     casks = [

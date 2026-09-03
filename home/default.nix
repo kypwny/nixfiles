@@ -31,6 +31,39 @@
 
   programs.home-manager.enable = true;
 
+  programs.ssh = {
+    enable = true;
+    enableDefaultConfig = false;
+    settings = {
+      "*" = {
+        hashKnownHosts = true;
+        addressFamily = "inet";
+        visualHostKey = true;
+      };
+      "github.com" = {
+        user = "git";
+        identitiesOnly = true;
+        identityFile = "~/.ssh/ky";
+        controlMaster = "no";
+      };
+      "git.tilde.horse" = {
+        user = "forgejo";
+        identitiesOnly = true;
+        identityFile = "~/.ssh/ky";
+      };
+      "tilde.horse" = {
+        user = "ky";
+        identitiesOnly = true;
+        identityFile = "~/.ssh/ky";
+      };
+      "kura" = {
+        hostname = "192.168.1.31";
+        user = "ky";
+        identityFile = "~/.ssh/id_ed25519";
+      };
+    };
+  };
+
   programs.git = {
     enable = true;
     settings = {
