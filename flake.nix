@@ -59,6 +59,11 @@
           username = "ky";
           system = "x86_64-linux";
         };
+        navi = mylib.mkNixos {
+          hostname = "navi";
+          username = "ky";
+          system = "x86_64-linux";
+        };
       };
 
       darwinConfigurations = {
