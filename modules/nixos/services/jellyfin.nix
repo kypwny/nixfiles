@@ -13,14 +13,10 @@ let
     "tv"
     "music"
   ];
-  caddyContainerAddress = vars.containers.asciiWebserver.address;
   networkXmlTemplate = pkgs.writeText "jellyfin-network.xml" ''
     <?xml version="1.0" encoding="utf-8"?>
     <NetworkConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
       <BaseUrl>/jellyfin</BaseUrl>
-      <KnownProxies>
-        <string>${caddyContainerAddress}</string>
-      </KnownProxies>
     </NetworkConfiguration>
   '';
 in
@@ -151,11 +147,6 @@ in
 
               if ! grep -q '<KnownProxies' "$networkXml"; then
                 "$xmlstarlet" ed -s '/NetworkConfiguration' -t elem -n KnownProxies -v "" "$networkXml" >"$tmp"
-                mv "$tmp" "$networkXml"
-              fi
-
-              if ! grep -q '<string>${caddyContainerAddress}</string>' "$networkXml"; then
-                "$xmlstarlet" ed -s '/NetworkConfiguration/KnownProxies' -t elem -n string -v '${caddyContainerAddress}' "$networkXml" >"$tmp"
                 mv "$tmp" "$networkXml"
               fi
             fi
