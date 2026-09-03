@@ -17,7 +17,6 @@ in
     ../../modules/nixos/services/jellyfin.nix
     ../../modules/nixos/services/motd.nix
     ../../modules/nixos/containers/qbittorrent.nix
-    ../../modules/nixos/containers/ascii-webserver
     ../../modules/nixos/containers/minecraft.nix
     ../../modules/nixos/containers/personal-webserver.nix
   ];

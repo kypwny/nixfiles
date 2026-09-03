@@ -49,11 +49,6 @@ in
       address = "192.168.1.52";
       cidr = mkCidr address;
     };
-    asciiWebserver = rec {
-      name = "ascii-webserver";
-      address = "192.168.1.53";
-      cidr = mkCidr address;
-    };
     minecraft = rec {
       name = "minecraft";
       address = "192.168.1.54";
