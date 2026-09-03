@@ -155,4 +155,11 @@
     enable = true;
     nix-direnv.enable = true;
   };
+
+  programs.yt-dlp = {
+    enable = true;
+    settings = {
+      extractor-args = "youtube:player_client=mweb,android,web";
+    };
+  };
 }
