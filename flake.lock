@@ -199,11 +199,11 @@
         "rev": "d230afd8dda7651a8c7216004f9028c6660ab2d5",
         "revCount": 2,
         "type": "git",
-        "url": "ssh://forgejo@git.tilde.horse/ky/kypwny-net.git"
+        "url": "https://git.tilde.horse/ky/kypwny-net.git"
       },
       "original": {
         "type": "git",
-        "url": "ssh://forgejo@git.tilde.horse/ky/kypwny-net.git"
+        "url": "https://git.tilde.horse/ky/kypwny-net.git"
       }
     },
     "llm-agents": {
