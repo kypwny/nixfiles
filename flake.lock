@@ -186,6 +186,26 @@
         "type": "github"
       }
     },
+    "kypwny-site": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1788451354,
+        "narHash": "sha256-OwRZ/zHI/3RfBuPFx+b2+1Em/IPxj4JPkJOpQwGO6Fk=",
+        "ref": "refs/heads/main",
+        "rev": "d230afd8dda7651a8c7216004f9028c6660ab2d5",
+        "revCount": 2,
+        "type": "git",
+        "url": "ssh://forgejo@git.tilde.horse/ky/kypwny-net.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://forgejo@git.tilde.horse/ky/kypwny-net.git"
+      }
+    },
     "llm-agents": {
       "inputs": {
         "bun2nix": "bun2nix",
@@ -403,6 +423,7 @@
       "inputs": {
         "catppuccin": "catppuccin",
         "home-manager": "home-manager",
+        "kypwny-site": "kypwny-site",
         "llm-agents": "llm-agents",
         "mac-app-util": "mac-app-util",
         "nix-darwin": "nix-darwin",

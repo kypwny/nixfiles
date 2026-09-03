@@ -23,6 +23,12 @@
     nix-minecraft.url = "github:Infinidoge/nix-minecraft";
     catppuccin.url = "github:catppuccin/nix";
     catppuccin.inputs.nixpkgs.follows = "nixpkgs";
+
+    # kypwny.net. Built by kura at switch time and served from the store, so
+    # the docroot rolls back with the system. Publish: push there, then
+    # `nix flake update kypwny-site` + switch here.
+    kypwny-site.url = "git+ssh://forgejo@git.tilde.horse/ky/kypwny-net.git";
+    kypwny-site.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =

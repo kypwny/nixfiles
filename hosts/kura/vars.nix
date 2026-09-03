@@ -66,7 +66,6 @@ in
     repo = repoRoot;
     i2pKey = "${adminHome}/webserver/kypwny.dat";
     wireguardConfig = "${adminHome}/webserver/wireguard/wg0.conf";
-    webroot = "${adminHome}/webroot/dist";
     minecraftData = "${adminHome}/minecraft/fabric-server";
     minecraftSecrets = "${adminHome}/minecraft/secrets";
     qbittorrentWebUiEnv = "${adminHome}/qbittorrent/webui.env";
