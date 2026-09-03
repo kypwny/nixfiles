@@ -193,11 +193,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1788458030,
-        "narHash": "sha256-w24HyT7GlBskBU5PvDqGAOY9+DIzRJNqyc0wp4MTLrM=",
+        "lastModified": 1788458158,
+        "narHash": "sha256-hvefyBaNU7OodSEBqR9IwAKsVlDIo3B1/bDu04qCGUc=",
         "ref": "refs/heads/main",
-        "rev": "9170d86cd7c7dabd9234bbfee9ddfa1edd7eed6e",
-        "revCount": 5,
+        "rev": "a63cf8c0c3e5c66e30b37689ca2d7f55cfd1ce67",
+        "revCount": 6,
         "type": "git",
         "url": "https://git.tilde.horse/ky/kypwny-net.git"
       },
