@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 let
   dino-unwrapped = pkgs.dino.overrideAttrs (_: {
     doCheck = false;
@@ -65,5 +65,6 @@ in
   # macOS-specific home-manager additions
   home.packages = [
     dino-app
+    inputs.gomuks.packages.${pkgs.stdenv.hostPlatform.system}.terminal
   ];
 }
