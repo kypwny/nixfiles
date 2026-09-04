@@ -6,7 +6,7 @@ let
 
   dino-app = pkgs.stdenv.mkDerivation {
     pname = "dino-app";
-    version = dino-unwrapped.version;
+    inherit (dino-unwrapped) version;
 
     nativeBuildInputs = [
       pkgs.imagemagick

@@ -24,3 +24,13 @@ jobs:
       - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Evaluate Yoru
         run: nix eval .#darwinConfigurations.yoru.system.drvPath
+
+  eval-navi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - name: Evaluate Navi
+        run: nix eval .#nixosConfigurations.navi.config.system.build.toplevel.drvPath
+
