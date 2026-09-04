@@ -29,6 +29,10 @@
     # unattended switch. Publish = push, `nix flake update kypwny-site`, switch.
     kypwny-site.url = "git+https://git.tilde.horse/ky/kypwny-net.git";
     kypwny-site.inputs.nixpkgs.follows = "nixpkgs";
+
+    # gomuks Matrix client & backend
+    gomuks.url = "git+https://git.tilde.horse/ky/gomuks.git?ref=pwny";
+    gomuks.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
