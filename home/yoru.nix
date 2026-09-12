@@ -65,6 +65,6 @@ in
   # macOS-specific home-manager additions
   home.packages = [
     dino-app
-    inputs.gomuks.packages.${pkgs.stdenv.hostPlatform.system}.terminal
+    # gomuks-terminal: flake cleanSrc strips cmd/gomuks-terminal, package is broken
   ];
 }
