@@ -41,6 +41,7 @@
     yubikey-manager
     zxing-cpp
     innoextract
+    ext4fuse
     yt-dlp
   ];
 }
