@@ -49,9 +49,10 @@ let
       </plist>
       EOF
 
-      cat << 'EOF' > $out/Applications/Dino.app/Contents/MacOS/Dino
+      cat << EOF > $out/Applications/Dino.app/Contents/MacOS/Dino
       #!/bin/sh
-      exec ${dino-unwrapped}/bin/dino "$@"
+      export XDG_DATA_DIRS="${pkgs.adwaita-icon-theme}/share:\$XDG_DATA_DIRS"
+      exec ${dino-unwrapped}/bin/dino "\$@"
       EOF
       chmod +x $out/Applications/Dino.app/Contents/MacOS/Dino
     '';
