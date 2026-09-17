@@ -54,7 +54,7 @@
       "tilde.horse" = {
         user = "ky";
         identitiesOnly = true;
-        identityFile = "~/.ssh/ky";
+        identityFile = "~/.ssh/id_ed25519_sk";
       };
       "kura" = {
         hostname = "192.168.1.31";
