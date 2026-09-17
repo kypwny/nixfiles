@@ -41,7 +41,9 @@
     yubikey-manager
     zxing-cpp
     innoextract
+    lgogdownloader
     ext4fuse
     yt-dlp
+    speedtest-go
   ];
 }
