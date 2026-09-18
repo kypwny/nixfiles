@@ -13,7 +13,7 @@
         # Note: netexec's package.nix has its own internal python.override with
         # its own packageOverrides, which clobbers overrides on python312Packages.
         # By wrapping python312.override, we ensure our fixes compose properly.
-        applyPythonPatches = super: {
+        applyPythonPatches = _: super: {
           pynfsclient = super.pynfsclient.overridePythonAttrs (_: {
             dontCheckPythonMetadata = true;
           });
@@ -23,27 +23,28 @@
         };
 
         pythonWithPatch = final.python312.override {
-          packageOverrides = self: super: applyPythonPatches super;
+          packageOverrides = applyPythonPatches;
         };
 
         pythonWrapper = pythonWithPatch // {
           override =
             args:
             let
-              ourPO = self: super: applyPythonPatches super;
-              theirPO = args.packageOverrides or (self: super: { });
+              theirPO = args.packageOverrides or (_: _: { });
             in
             pythonWithPatch.override (
               builtins.removeAttrs args [ "packageOverrides" ]
               // {
-                packageOverrides = self: super: (ourPO self super) // (theirPO self (super // (ourPO self super)));
+                packageOverrides =
+                  self: super:
+                  (applyPythonPatches self super) // (theirPO self (super // (applyPythonPatches self super)));
               }
             );
         };
       in
       {
         python312Packages = prev.python312Packages.override {
-          overrides = self: super: applyPythonPatches super;
+          overrides = applyPythonPatches;
         };
         netexec = prev.netexec.override { python312 = pythonWrapper; };
 

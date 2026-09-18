@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }:
+{ pkgs, ... }:
 let
   dino-unwrapped = pkgs.dino.overrideAttrs (_: {
     doCheck = false;

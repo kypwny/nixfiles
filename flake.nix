@@ -104,7 +104,7 @@
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
-          lib = nixpkgs.lib;
+          inherit (nixpkgs) lib;
 
           # Tools are categorized once in lib/toolset.nix (RedNix's packages.nix
           # + shells/ shape) and one shell is generated per category, named
@@ -143,8 +143,7 @@
           name: packages:
           lib.nameValuePair name (
             pkgs.mkShell {
-              name = name;
-              packages = packages;
+              inherit name packages;
               shellHook = ''
                 echo "${name}: ${toString (builtins.length packages)} tools (tansu)"
                 echo "  lab root: ~/tansu"
