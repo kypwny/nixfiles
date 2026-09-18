@@ -61,6 +61,11 @@
         user = "ky";
         identityFile = "~/.ssh/id_ed25519";
       };
+      "aku" = {
+        hostname = "192.168.64.2";
+        user = "ky";
+        identityFile = "~/.ssh/id_ed25519";
+      };
     };
   };
 

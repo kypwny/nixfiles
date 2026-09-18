@@ -45,5 +45,10 @@
     ext4fuse
     yt-dlp
     speedtest-go
+    # The justfile assumes these are reachable from a plain shell. They were only
+    # in the `default` devShell, which made `just switch` fail unless you had
+    # already run `nix develop`. (Still needs one successful switch to appear.)
+    just
+    nh
   ];
 }
