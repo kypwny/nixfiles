@@ -15,6 +15,12 @@ in
       hostname,
       username ? "ky",
       system ? "x86_64-linux",
+      # Which module set defines the host:
+      #   "server" — kura/navi: physical hardware, br0 bridges, sops secrets keyed
+      #              to host SSH keys, containers.
+      #   "vm"     — a guest (aku): UEFI + virtio boot, no secrets, and none of
+      #              the physical hosts' services.
+      profile ? "server",
       extraModules ? [ ],
     }:
     let
@@ -38,7 +44,7 @@ in
       inherit system specialArgs;
       modules = [
         ../modules/shared
-        ../modules/nixos
+        (if profile == "vm" then ../modules/vm else ../modules/nixos)
         (../hosts + "/${hostname}")
         sops-nix.nixosModules.sops
         home-manager.nixosModules.home-manager

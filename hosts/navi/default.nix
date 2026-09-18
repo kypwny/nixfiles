@@ -9,6 +9,7 @@ in
   imports = [
     ./hardware-configuration.nix
     ./kernel.nix
+    ./kernel-dev.nix
   ];
 
   # Hostname matching audit
