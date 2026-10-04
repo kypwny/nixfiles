@@ -35,11 +35,4 @@
       ];
     };
   };
-
-  programs.zsh = {
-    initContent = ''
-      # aku evil arsenal prompt: blood-red kanji + gothic arrows
-      PROMPT='%F{red}☠ %B悪%b%f %F{196}❯%F{160}❯%F{124}❯%f %F{red}%n@%m%f %F{244}%~%f %F{red}#%f '
-    '';
-  };
 }

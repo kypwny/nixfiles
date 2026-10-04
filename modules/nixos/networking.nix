@@ -51,4 +51,7 @@ in
   };
 
   networking.firewall.allowedTCPPorts = [ 22 ];
+
+  # Don't fail activation waiting for secondary/idle interfaces (e.g. Wi-Fi) to associate
+  systemd.services.NetworkManager-wait-online.enable = false;
 }

@@ -160,7 +160,7 @@
       zstyle ':vcs_info:git:*' check-for-changes true
       zstyle ':vcs_info:git:*' stagedstr '+'
       zstyle ':vcs_info:git:*' unstagedstr '*'
-      zstyle ':vcs_info:git:*' formats ' %F{magenta}[%b%u%c]%f'
+      zstyle ':vcs_info:git:*' formats ' %F{yellow}[%b%u%c]%f'
       zstyle ':vcs_info:git:*' actionformats ' %F{yellow}[%b|%a]%f'
       add-zsh-hook precmd vcs_info
       setopt prompt_subst
@@ -176,7 +176,14 @@
         fi
       }
 
-      PROMPT='$(prompt_status) %F{green}%n@%m%f %F{blue}%~%f''${vcs_info_msg_0_} %# '
+      case "$HOST" in
+        *navi*) host_color="blue" ;;
+        *kura*) host_color="green" ;;
+        *aku*) host_color="red" ;;
+        *yoru*|*) host_color="244" ;;
+      esac
+
+      PROMPT='$(prompt_status) %B%F{green}%n%f@%F{''${host_color}}%m%f%b %F{magenta}%~%f''${vcs_info_msg_0_} %# '
 
       # Key bindings for history substring search
       bindkey '^[[A' history-substring-search-up

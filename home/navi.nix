@@ -19,11 +19,6 @@ in
   # navi runs red; the shared default.nix stays blue for the other hosts.
   catppuccin.accent = lib.mkForce "red";
 
-  # Navi's prompt is blue; yoru and the other hosts keep the shared green.
-  programs.zsh.initContent = lib.mkAfter ''
-    PROMPT='$(prompt_status) %F{blue}%n@%m%f %F{blue}%~%f''${vcs_info_msg_0_} %# '
-  '';
-
   # Allow legacy olm for gomuks
   nixpkgs.config.permittedInsecurePackages = [
     "olm-3.2.16"
