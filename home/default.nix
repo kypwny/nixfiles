@@ -106,6 +106,16 @@
       };
       gpg = {
         format = "ssh";
+        ssh = {
+          # nix-darwin leaves a stale /run/current-system ssh-keygen first on
+          # PATH; pin the platform signer so commits actually get signed.
+          program =
+            if pkgs.stdenv.hostPlatform.isDarwin then
+              "/usr/bin/ssh-keygen"
+            else
+              "ssh-keygen";
+          allowedSignersFile = "~/.ssh/allowed_signers";
+        };
       };
       commit = {
         gpgsign = true;
@@ -115,6 +125,11 @@
       };
     };
   };
+
+  # Trust our own ssh signing key so `git log --show-signature` verifies.
+  home.file.".ssh/allowed_signers".text = ''
+    ky@tilde.horse ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDw0aRfa+YINgWJP7FKsRZ+swvPOLE5cc94ZyijkZFoX
+  '';
 
   programs.gh = {
     enable = true;
