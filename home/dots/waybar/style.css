@@ -1,0 +1,89 @@
+* {
+  border: none;
+  border-radius: 0;
+  font-family: "monospace";
+  font-size: 14px;
+  min-height: 0;
+}
+
+/* Tooltip styling */
+tooltip {
+  background: #181825;
+  border: 1px solid #313244;
+  color: #cdd6f4;
+  font-family: "monospace";
+  font-size: 8px;
+  padding: 8px 12px;
+}
+
+tooltip label {
+  color: #cdd6f4;
+}
+
+
+window#waybar {
+  background: rgba(30, 30, 46, 0.95);
+  /* Semi-transparent base */
+  color: #cdd6f4;
+}
+
+/* Workspaces styling */
+#workspaces {
+  background: transparent;
+}
+
+#workspaces button {
+  padding: 0 8px;
+  background: transparent;
+  color: #6c7086;
+  transition: all 0.3s ease;
+}
+
+#workspaces button:hover {
+  color: #cdd6f4;
+}
+
+#workspaces button.active {
+  background: transparent;
+  color: #a6e3a1;
+  /* Green accent */
+  font-weight: bold;
+}
+
+#workspaces button.urgent {
+  color: #f38ba8;
+  font-weight: bold;
+}
+
+/* Module styling */
+#clock,
+#cpu,
+#memory,
+#wireplumber,
+#tray,
+#custom-weather,
+#custom-coingecko {
+  padding: 0 6px;
+  background: transparent;
+}
+
+#tray {
+  padding: 0px 5px 0px 10px;
+  color: #cdd6f4;
+}
+
+/* Status colors */
+#battery.critical {
+  color: #f38ba8;
+  font-weight: bold;
+}
+
+#battery.warning {
+  color: #fab387;
+  font-weight: bold;
+}
+
+#network.disconnected {
+  color: #f38ba8;
+  font-weight: bold;
+}

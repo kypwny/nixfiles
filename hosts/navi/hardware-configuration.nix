@@ -1,17 +1,29 @@
-# Staged hardware-configuration for navi from audit facts
-# Storage layout:
-#   /dev/sda1 -> ESP (vfat) UUID=1923-AD36, PARTUUID=e7b2ac59-ea5f-b147-84b9-0951f7cebe26 -> /boot
-#   /dev/sda2 -> crypto_LUKS PARTUUID=93399d55-76ef-8f41-aef6-0b98507ebec4, UUID=fcdbbfd0-d28c-4d4a-a34f-1fcd23a0068a
-#     LVM VG: secure
-#     LV: /dev/secure/root (UUID=38fa0987-7fd6-4074-aca7-68a36d54a080) -> / (xfs)
-#     LV: /dev/secure/swap -> swap
-#   /dev/nvme0n1p1 -> LABEL=extrastorage (xfs) -> /mnt/extrastorage
+# Staged hardware-configuration for navi: btrfs-on-LUKS boot disk + xfs data NVMe.
+#
+# Devices are referenced by LABEL, not UUID, so this config is valid the moment
+# the installer creates the filesystems with matching labels — no post-install
+# edits. When laying out the disk (see impermanence.nix for the rollback flow):
+#
+#   /dev/sda (Samsung 860 EVO 500GB — wipe & repartition)
+#     sda1  1 GiB ESP, mkfs.vfat -n BOOT
+#     sda2  8 GiB swap, mkswap -L SWAP
+#     sda3  rest, cryptsetup luksFormat --label navi-crypt
+#           cryptsetup open navi-crypt enc && mkfs.btrfs -L NIXOS /dev/mapper/enc
+#           subvolumes: root (snapshot to root-blank at install!), nix, persist, log, home
+#
+#   /dev/nvme0n1p1 (GIGABYTE 1.8T — untouched, stays xfs) LABEL=extrastorage
 {
   config,
   lib,
   modulesPath,
   ...
 }:
+let
+  btrfsSubvolOptions = [
+    "compress=zstd"
+    "noatime"
+  ];
+in
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
@@ -31,9 +43,9 @@
     "dm_crypt"
   ];
 
-  # LUKS on LVM configuration
-  boot.initrd.luks.devices."cryptroot" = {
-    device = "/dev/disk/by-uuid/fcdbbfd0-d28c-4d4a-a34f-1fcd23a0068a";
+  # LUKS2 on the boot disk (label set at luksFormat time)
+  boot.initrd.luks.devices."enc" = {
+    device = "/dev/disk/by-label/navi-crypt";
     allowDiscards = true;
     preLVM = true;
   };
@@ -46,19 +58,45 @@
     "nct6775"
   ];
 
-  # Filesystems matching navi's existing partitioning
+  # Btrfs subvolumes on the LUKS container. Root is rolled back to root-blank
+  # on every boot by the initrd rollback service in impermanence.nix, so only
+  # persist/log carry state across reboots (neededForBoot).
+
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/38fa0987-7fd6-4074-aca7-68a36d54a080";
-    fsType = "xfs";
-    options = [
-      "defaults"
-      "noatime"
-      "discard"
-    ];
+    device = "/dev/disk/by-label/NIXOS";
+    fsType = "btrfs";
+    options = [ "subvol=root" ] ++ btrfsSubvolOptions;
+  };
+
+  fileSystems."/nix" = {
+    device = "/dev/disk/by-label/NIXOS";
+    fsType = "btrfs";
+    options = [ "subvol=nix" ] ++ btrfsSubvolOptions;
+  };
+
+  fileSystems."/persist" = {
+    device = "/dev/disk/by-label/NIXOS";
+    fsType = "btrfs";
+    options = [ "subvol=persist" ] ++ btrfsSubvolOptions;
+    neededForBoot = true;
+  };
+
+  fileSystems."/var/log" = {
+    device = "/dev/disk/by-label/NIXOS";
+    fsType = "btrfs";
+    options = [ "subvol=log" ] ++ btrfsSubvolOptions;
+    neededForBoot = true;
+  };
+
+  # /home stays a persistent btrfs subvolume (no home impermanence)
+  fileSystems."/home" = {
+    device = "/dev/disk/by-label/NIXOS";
+    fsType = "btrfs";
+    options = [ "subvol=home" ] ++ btrfsSubvolOptions;
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/1923-AD36";
+    device = "/dev/disk/by-label/BOOT";
     fsType = "vfat";
     options = [
       "umask=0077"
@@ -66,6 +104,7 @@
     ];
   };
 
+  # Data drive: xfs on NVMe, carried over from the Gentoo layout untouched
   fileSystems."/mnt/extrastorage" = {
     device = "/dev/disk/by-label/extrastorage";
     fsType = "xfs";
@@ -76,8 +115,12 @@
     ];
   };
 
+  # Encrypted-at-boot swap: fresh random key each boot (no hibernation)
   swapDevices = [
-    { device = "/dev/secure/swap"; }
+    {
+      device = "/dev/disk/by-partuuid/2aa3d452-6bfe-4701-b5ca-73f4751e3b1c";
+      randomEncryption.enable = true;
+    }
   ];
 
   # CPU microcode for AMD Ryzen (Zen 3 / Family 19h)

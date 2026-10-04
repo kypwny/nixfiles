@@ -2,9 +2,13 @@
   description = "Multi-host NixOS and nix-darwin configuration";
 
   nixConfig = {
-    extra-substituters = [ "https://cache.numtide.com" ];
+    extra-substituters = [
+      "https://cache.numtide.com"
+      "https://attic.xuyh0120.win/lantian"
+    ];
     extra-trusted-public-keys = [
       "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
+      "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
     ];
   };
 
@@ -14,6 +18,8 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    impermanence.url = "github:nix-community/impermanence";
+    impermanence.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     treefmt-nix.url = "github:numtide/treefmt-nix";
@@ -21,17 +27,12 @@
     mac-app-util.url = "github:hraban/mac-app-util";
     mac-app-util.inputs.nixpkgs.follows = "nixpkgs";
     llm-agents.url = "github:numtide/llm-agents.nix";
-    nix-minecraft.url = "github:Infinidoge/nix-minecraft";
     catppuccin.url = "github:catppuccin/nix";
     catppuccin.inputs.nixpkgs.follows = "nixpkgs";
 
-    # kypwny.net docroot, built by kura at switch time (see personal-webserver).
-    # https, not ssh: kura's key is passphrase-protected, which would block an
-    # unattended switch. Publish = push, `nix flake update kypwny-site`, switch.
-    kypwny-site.url = "git+https://git.tilde.horse/ky/kypwny-net.git";
-    kypwny-site.inputs.nixpkgs.follows = "nixpkgs";
+    # Pinned CachyOS kernel tree and binaries for navi.
+    nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
 
-    # gomuks Matrix client & backend
     gomuks.url = "git+https://git.tilde.horse/ky/gomuks.git?ref=pwny";
     gomuks.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -103,7 +104,12 @@
       devShells = forEachSystem (
         system:
         let
-          pkgs = nixpkgs.legacyPackages.${system};
+          sharedOverlays = import ./modules/shared/overlays.nix;
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = sharedOverlays.nixpkgs.overlays;
+            config.allowUnfree = true;
+          };
           inherit (nixpkgs) lib;
 
           # Tools are categorized once in lib/toolset.nix (RedNix's packages.nix
@@ -121,6 +127,7 @@
           categories = builtins.removeAttrs toolset [
             "system"
             "elfHeaders"
+            "offsecPython"
           ];
         in
         {
@@ -154,6 +161,10 @@
                 #   hashcat ... $ROCKYOU
                 export SECLISTS="${pkgs.seclists}/share/wordlists/seclists"
                 export ROCKYOU="${pkgs.rockyou}/share/wordlists/rockyou.txt"
+                ${lib.optionalString (name == "offsec") ''
+                  # Ensure the offsec python with custom packages takes precedence over bare python
+                  export PATH="${toolset.offsecPython}/bin:$PATH"
+                ''}
               ''
               + lib.optionalString (name == "all" || name == "toolchain") ''
                 # Host tools in a Linux kernel build include <elf.h>, which macOS

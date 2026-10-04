@@ -1,6 +1,6 @@
-{ vars, ... }:
+{ lib, vars, ... }:
 {
-  security.sudo.extraRules = [
+  security.sudo.extraRules = lib.optionals (vars.user.passwordlessSudo or false) [
     {
       users = [ vars.user.name ];
       commands = [
@@ -11,8 +11,6 @@
       ];
     }
   ];
-
-  security.unprivilegedUsernsClone = true;
 
   services.openssh = {
     enable = true;

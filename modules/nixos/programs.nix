@@ -3,11 +3,12 @@
   time.timeZone = "America/New_York";
   i18n.defaultLocale = "en_US.UTF-8";
 
+  programs.mtr.enable = true;
+
   programs.fish = {
     enable = true;
     interactiveShellInit = ''
       set fish_greeting
-      fish_config theme choose catppuccin-mocha --color-theme=dark >/dev/null 2>&1
     '';
   };
 

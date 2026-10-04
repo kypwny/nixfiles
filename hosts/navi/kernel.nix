@@ -1,87 +1,34 @@
-# Custom kernel and bootloader configuration for navi
-# Derived from audit 00-REPORT.md and cmdline.bin:
-# - Self-built kernel parameters: AMD GPU overdrive, Zen 3 pstate, VFIO isolation, hugepages
-# - Option to build custom kernel packages with structured extraConfig or manual config
-{ lib, pkgs, ... }:
+# Use the release-pinned, prebuilt CachyOS BORE kernel for navi. Keep the
+# upstream kernel config intact: no local Kconfig edits or kernel compilation.
+{ inputs, pkgs, ... }:
 {
-  # Boot loader: systemd-boot for UEFI
+  # Pinned overlay matches the Cachy release's CI nixpkgs so the kernel resolves
+  # to its signed binary-cache output rather than rebuilding locally.
+  nixpkgs.overlays = [ inputs.nix-cachyos-kernel.overlays.pinned ];
+
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Base kernel packages: latest upstream linux package set,
-  # or customized with structured extraConfig mirroring navi's self-compiled options
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  # Desktop/gaming BORE (not PREEMPT_RT); full upstream Cachy driver support.
+  boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-bore;
 
-  # Custom kernel config deltas based on gentoo-7.2.0-psyche from audit
-  boot.kernelPatches = [
-    {
-      name = "navi-kernel-tuning";
-      patch = null;
-      structuredExtraConfig = with lib.kernel; {
-        # Performance & preemption
-        PREEMPT_DYNAMIC = lib.mkForce yes;
-        HZ_1000 = lib.mkForce yes;
-
-        # Hardening gaps noted in audit §8
-        SECURITY_LOCKDOWN_LSM = lib.mkForce yes;
-        MODULE_SIG = lib.mkForce yes;
-        MODULE_SIG_ALL = lib.mkForce yes;
-        MODULE_SIG_SHA512 = lib.mkForce yes;
-
-        # Hardware sensors & Wi-Fi
-        SENSORS_NCT6775 = lib.mkForce module;
-        IWLWIFI = lib.mkForce module;
-        IWLMVM = lib.mkForce module;
-        BT_INTEL_PCIE = lib.mkForce module;
-
-        # VFIO passthrough for win11/gaming VM
-        VFIO = lib.mkForce yes;
-        VFIO_PCI = lib.mkForce module;
-        VFIO_PCI_CORE = lib.mkForce module;
-      };
-    }
-  ];
-
-  # Kernel command-line arguments derived from running UKI /etc/kernel/cmdline
+  # Keep only host-specific runtime settings that still matter.
   boot.kernelParams = [
-    # AMD GPU power management & overdrive
     "amdgpu.dpm=1"
-    "amdgpu.ppfeaturemask=0xfff7ffff"
-
-    # CPU & scheduler tuning
-    "preempt=full"
+    "amdgpu.ppfeaturemask=0xffffffff"
     "amd_pstate=active"
-    "cpufreq.default_governor=performance"
-    "nowatchdog"
     "random.trust_cpu=off"
     "iommu=pt"
-
-    # PCIe & NVMe power management (keep controllers responsive)
-    "nvme_core.default_ps_max_latency_us=0"
-    "pcie_aspm=off"
-    "pcie_port_pm=off"
-
-    # Displays
     "video=DP-1:2560x1440@144"
     "video=DP-2:2560x1440@144"
-
-    # KVM & virtualization (GPU passthrough)
     "kvm_amd.avic=1"
     "kvm_amd.nested=0"
     "kvm.ignore_msrs=1"
     "kvm.report_ignored_msrs=0"
-
-    # CPU core isolation & IRQ affinity for VM
-    "irqaffinity=0-7,16-23"
-    "isolcpus=managed_irq,8-15,24-31"
-
-    # Hugepages for virtualization
-    "default_hugepagesz=1G"
-    "hugepagesz=1G"
-    "hugepages=16"
   ];
 
-  # Module options (GPU passthrough & audio)
+  # Keep existing VFIO/VM module setup; the stock kernel includes these modules.
+  boot.initrd.kernelModules = [ "vfio-pci" ];
   boot.extraModprobeConfig = ''
     softdep snd_hda_intel pre: vfio-pci
     options vfio-pci ids=10de:2208,10de:1aef
@@ -90,6 +37,9 @@
     options kvm_amd avic=1 nested=0
     options kvm ignore_msrs=1 report_ignored_msrs=0
   '';
+
+  # The old kernel reserved 16 GiB in 1-GiB hugepages and isolated half the
+  # CPUs. Leave the stock scheduler/memory setup alone for a normal desktop.
 
   # Sysctl performance & security settings (from /etc/sysctl.d/performance.conf & security.conf)
   boot.kernel.sysctl = {

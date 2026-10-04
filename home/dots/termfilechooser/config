@@ -1,0 +1,7 @@
+[filechooser]
+cmd=/home/ky/.config/xdg-desktop-portal-termfilechooser/nnn-wrapper.sh
+create_help_file=0
+default_dir=$HOME/Downloads/
+env=EDITOR=nvim
+open_mode=default_dir
+save_mode=default_dir

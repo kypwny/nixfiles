@@ -1,0 +1,34 @@
+font=CaskaydiaMono NerdFont 10
+output=DP-1
+background-color=#1e1e2e
+text-color=#cdd6f4
+border-color=#a6e3a1
+progress-color=over #313244
+
+# Formatting
+format=<b>%s</b>\n%b
+border-size=1
+
+# Position and size
+anchor=top-right
+
+# Icons
+icon-path=/usr/share/icons/Papirus-Dark
+max-icon-size=48
+
+# Behavior
+max-visible=5
+layer=overlay
+sort=-time
+
+# Urgency-specific settings
+[urgency=low]
+border-color=#b4befe
+default-timeout=10000
+
+[urgency=normal]
+border-color=#89b4fa
+default-timeout=5000
+
+[urgency=high]
+border-color=#f9e2af

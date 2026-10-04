@@ -1,0 +1,82 @@
+{
+  "layer": "top",
+  "position": "top",
+  "output": "DP-1",
+  "height": 28,
+  "spacing": 20,
+  "margin-top": 0,
+  "margin-bottom": 0,
+  "modules-left": [
+    "hyprland/workspaces"
+  ],
+  "modules-center": [
+    "clock"
+  ],
+  "modules-right": [
+    "custom/weather",
+    "custom/coingecko",
+    "custom/sysinfo",
+    "tray"
+  ],
+  "hyprland/workspaces": {
+    "all-outputs": true,
+    "show-special": true,
+    "active-only": false,
+    "on-click": "activate"
+  },
+  "clock": {
+    "interval": 1,
+    "tooltip-format": "<big>{:%Y %B}</big>\n<tt><big>{calendar}</big></tt>",
+    "format": "{:%Y-%m-%d %H:%M:%S}",
+    "format-alt": "{:%Y-%m-%d %I:%M:%S}",
+    "calendar": {
+      "mode": "month",
+      "mode-mon-col": 3,
+      "weeks-pos": "right",
+      "on-scroll": 1,
+      "format": {
+        "months": "<span color='#f5e0dc'><b>{}</b></span>", // Rosewater
+        "days": "<span color='#cba6f7'><b>{}</b></span>", // Mauve
+        "weeks": "<span color='#a6e3a1'><b>W{}</b></span>", // Green
+        "weekdays": "<span color='#fab387'><b>{}</b></span>", // Peach
+        "today": "<span color='#f38ba8'><b><u>{}</u></b></span>" // Red
+      }
+    },
+    "actions": {
+      "on-click-right": "mode",
+      "on-click-forward": "tz_up",
+      "on-click-backward": "tz_down",
+      "on-scroll-up": "shift_up",
+      "on-scroll-down": "shift_down"
+    }
+  },
+  "custom/sysinfo": {
+    "exec": "~/.config/waybar/sysinfo.rb",
+    "return-type": "json",
+    "interval": 2,
+    "format": " {}",
+    "tooltip": true
+  },
+  "wireplumber": {
+    "format": "󰕾  {volume}%",
+    "format-muted": "",
+    "on-click": "foot -e pulsemixer"
+  },
+  "tray": {
+    "icon-size": 12,
+    "spacing": 10
+  },
+  "custom/weather": {
+    "exec": "~/.config/waybar/weather.py waybar",
+    "restart-interval": 900,
+    "return-type": "json"
+  },
+  "custom/coingecko": {
+    "exec": "torsocks ~/.config/waybar/crypto.rb",
+    "return-type": "json",
+    "interval": 1800,
+    "format": "{}",
+    "tooltip": true,
+    "on-click": "xdg-open https://www.coingecko.com"
+  }
+}

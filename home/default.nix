@@ -5,7 +5,8 @@
 }:
 {
   home.username = username;
-  home.homeDirectory = if pkgs.stdenv.isDarwin then "/Users/${username}" else "/home/${username}";
+  home.homeDirectory =
+    if pkgs.stdenv.hostPlatform.isDarwin then "/Users/${username}" else "/home/${username}";
 
   home.stateVersion = "26.05";
 
@@ -50,16 +51,42 @@
         user = "forgejo";
         identitiesOnly = true;
         identityFile = "~/.ssh/ky";
+        proxyJump = "kura.local";
+      };
+      "root@tilde.horse" = {
+        hostname = "tilde.horse";
+        user = "root";
+        identitiesOnly = true;
+        identityFile = "~/.ssh/evil";
+        identityAgent = "none";
       };
       "tilde.horse" = {
         user = "ky";
         identitiesOnly = true;
-        identityFile = "~/.ssh/id_ed25519_sk";
+        identityFile = "~/.ssh/ky";
+        # ISP blacklists tilde.horse's IP; hop through kura, which routes
+        # 65.87.7.164 via the Mullvad split tunnel.
+        proxyJump = "kura.local";
+      };
+      "matrix.tilde.horse" = {
+        user = "root";
+        port = 2077;
+        identitiesOnly = true;
+        identityFile = "~/.ssh/evil";
+        identityAgent = "none";
+        proxyJump = "kura.local";
+      };
+      "pony.kyun.li" = {
+        user = "root";
+        identitiesOnly = true;
+        identityFile = "~/.ssh/evil";
+        identityAgent = "none";
       };
       "kura" = {
-        hostname = "192.168.1.31";
+        hostname = "kura.local";
         user = "ky";
-        identityFile = "~/.ssh/id_ed25519";
+        identityFile = "~/.ssh/ky"; # unicorn
+        identitiesOnly = true;
       };
       "aku" = {
         hostname = "192.168.64.2";
@@ -96,6 +123,10 @@
   # Disable starship in favor of minimal custom prompt
   programs.starship.enable = false;
 
+  # Fish shell enabled in Home Manager across all hosts
+  # (Enables declarative completions, catppuccin.fish, and fzf/zoxide/direnv integrations)
+  programs.fish.enable = true;
+
   programs.zsh = {
     enable = true;
     enableCompletion = true;
@@ -104,7 +135,10 @@
     historySubstringSearch.enable = true;
 
     initContent = ''
-      export TERM=xterm-256color
+      # Keep kitty terminfo if running inside kitty; fallback to xterm-256color otherwise
+      if [[ -z "$KITTY_WINDOW_ID" && "$TERM" != "xterm-kitty" ]]; then
+        export TERM=xterm-256color
+      fi
 
       # Git-aware minimal prompt
       autoload -Uz add-zsh-hook vcs_info
@@ -148,6 +182,36 @@
 
   programs.btop = {
     enable = true;
+  };
+
+  programs.tmux = {
+    enable = true;
+    mouse = true;
+    keyMode = "vi";
+    escapeTime = 0;
+    terminal = "tmux-256color";
+  };
+
+  programs.zoxide = {
+    enable = true;
+    enableZshIntegration = true;
+    enableFishIntegration = true;
+  };
+
+  programs.tealdeer = {
+    enable = true;
+    settings.updates.auto_update = true;
+  };
+
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
+  };
+
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+    enableFishIntegration = true;
   };
 
   programs.eza = {

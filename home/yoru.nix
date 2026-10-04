@@ -1,7 +1,11 @@
 { pkgs, ... }:
 let
-  dino-unwrapped = pkgs.dino.overrideAttrs (_: {
+  # Upstream nixpkgs marked dino broken on aarch64-darwin
+  dino-unwrapped = pkgs.dino.overrideAttrs (old: {
     doCheck = false;
+    meta = (old.meta or { }) // {
+      broken = false;
+    };
   });
 
   dino-app = pkgs.stdenv.mkDerivation {
@@ -61,6 +65,9 @@ in
 {
   imports = [
     ./default.nix
+    ./kitty.nix
+    ./wezterm.nix
+    ./ghostty.nix
   ];
 
   # macOS-specific home-manager additions
@@ -68,4 +75,20 @@ in
     dino-app
     # gomuks-terminal: flake cleanSrc strips cmd/gomuks-terminal, package is broken
   ];
+
+  targets.darwin.defaults."com.brave.Browser" = {
+    # Brave features
+    BraveRewardsDisabled = true;
+    BraveAIChatEnabled = false;
+
+    # Password management (using Proton Pass)
+    PasswordManagerEnabled = false;
+    PasswordLeakDetectionEnabled = false;
+
+    # Autofill
+    AutoFillEnabled = false;
+    AutofillAddressEnabled = false;
+    AutofillCreditCardEnabled = false;
+    PaymentMethodQueryEnabled = false;
+  };
 }

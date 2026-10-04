@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=X-GNOME-Metatheme
+Name=psyche
+Comment=ahoka (ahodesuka/dotfiles) for GTK3 and GTK4, on base16 Classic Dark
+Encoding=UTF-8
+
+[X-GNOME-Metatheme]
+GtkTheme=psyche

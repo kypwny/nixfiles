@@ -1,5 +1,9 @@
 { pkgs, ... }:
 {
+  fonts.packages = with pkgs; [
+    maple-mono.Normal-NF
+  ];
+
   environment.systemPackages = with pkgs; [
     vim
     wget
@@ -10,11 +14,11 @@
     fd
     tree
     fastfetch
-    btop
     nil
     sbcl
     lftp
     ffmpeg
+    imagemagick
     bun
     cmake
     flashrom
@@ -30,8 +34,16 @@
           autoload
           mpv-webm
         ]
-        ++ pkgs.lib.optionals pkgs.stdenv.isLinux [ mpris ];
+        ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [ mpris ];
     })
+    weechat
+    pfetch
+    nix-output-monitor
+    dust
+    nvd
+    sops
+    age
+    mtr
     neovim
     openssh
     rojo
@@ -42,7 +54,6 @@
     zxing-cpp
     innoextract
     lgogdownloader
-    ext4fuse
     yt-dlp
     speedtest-go
     # The justfile assumes these are reachable from a plain shell. They were only
@@ -50,5 +61,6 @@
     # already run `nix develop`. (Still needs one successful switch to appear.)
     just
     nh
+    kitty.terminfo
   ];
 }

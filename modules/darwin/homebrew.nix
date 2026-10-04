@@ -38,7 +38,12 @@
       "discord"
       "freecad"
       "github"
-      "helium-browser"
+      # Wine gaming launchers (requires Rosetta 2: softwareupdate --install-rosetta)
+      "heroic"
+      "porting-kit"
+      # nixpkgs ghostty has no darwin build; the cask provides the app while
+      # home/ghostty.nix writes its config.
+      "ghostty"
       # Re-signing / bundling IPAs for on-device work. The other iOS-relevant
       # casks do not exist or are unusable: no `xcode` cask (Apple-ID gated, use
       # the xcodes formula), no `palera1n` cask (pinned as packages.palera1n),
@@ -49,7 +54,9 @@
       "kicad"
       "linphone"
       "lulu"
-      "macfuse"
+      # fuse-t replaces macfuse: kext-free (userspace NFS-loopback) FUSE for
+      # occasional HDD mounts. Nothing on this machine requires macFUSE.
+      "fuse-t"
       "netnewswire"
       "obs"
       "obsidian"
@@ -62,17 +69,17 @@
       "simplex"
       "steam"
       "telegram"
+      "tor-browser"
       "ultimaker-cura"
       "utm"
-      "vivaldi"
-      "waves-central"
       "whatsapp"
+      # Token is wireshark-app (old token: wireshark). The cask installs the
+      # GUI, ChmodBPF (live capture), and the CLI tools onto PATH.
+      "wireshark-app"
       "zed"
     ];
 
     masApps = {
-      "BeagleIM" = 1445349494;
-      "Monal" = 1637078500;
       "The Unarchiver" = 425424353;
       "WutheringWaves" = 6475033368;
     };

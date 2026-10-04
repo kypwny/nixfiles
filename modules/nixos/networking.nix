@@ -19,12 +19,20 @@ in
           autoconnect-priority = 100;
         };
         bridge.stp = false;
-        ipv4 = {
-          method = "manual";
-          address1 = network.hostCidr;
-          inherit (network) gateway;
-          dns = network.hostDns;
-        };
+        # Hosts that declare network.hostCidr in vars.nix keep their static
+        # manual address; hosts without it (kura on DHCP) fall back to auto.
+        ipv4 =
+          if network ? hostCidr then
+            {
+              method = "manual";
+              address1 = network.hostCidr;
+              inherit (network) gateway;
+              dns = network.hostDns;
+            }
+          else
+            {
+              method = "auto";
+            };
         ipv6.method = "auto";
       };
 

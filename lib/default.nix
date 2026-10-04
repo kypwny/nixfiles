@@ -31,7 +31,7 @@ in
           username
           hostname
           ;
-        inherit (inputs) llm-agents nix-minecraft;
+        inherit (inputs) llm-agents;
         inherit (inputs) gomuks;
       };
       homeFile =

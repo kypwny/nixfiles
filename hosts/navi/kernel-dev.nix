@@ -54,7 +54,7 @@ in
         ltrace
 
         # ---- tracing, matched to the running kernel -------------------------
-        linuxPackages_latest.perf # same set boot.kernelPackages pulls from
+        perf # nixpkgs now ships a version-independent perf; linuxPackages.perf is a deprecated alias
 
         # ---- fuzzing --------------------------------------------------------
         aflplusplus

@@ -1,0 +1,192 @@
+Module                  Size  Used by
+snd_seq_dummy          16384  0
+snd_hrtimer            16384  1
+snd_seq               118784  7 snd_seq_dummy
+xt_MASQUERADE          16384  1
+xfrm_user              77824  1
+xfrm_algo              16384  1 xfrm_user
+xt_set                 24576  0
+ip_set                 69632  1 xt_set
+nft_chain_nat          12288  5
+xt_addrtype            12288  4
+ccm                    28672  2
+af_packet              69632  6
+xt_conntrack           12288  4
+xt_tcpudp              16384  3
+ip6t_rpfilter          12288  1
+ipt_rpfilter           12288  1
+xt_pkttype             12288  2
+nft_compat             24576  16
+nf_tables             405504  197 nft_compat,nft_chain_nat
+sch_fq_codel           28672  2
+xfs                  4452352  1
+r8169                 159744  0
+nls_iso8859_1          12288  1
+nls_cp437              16384  1
+realtek                65536  1
+edac_mce_amd           40960  0
+vfat                   28672  1
+phy_package            20480  1 realtek
+edac_core             110592  0
+fat                   114688  1 vfat
+mdio_devres            12288  1 r8169
+of_mdio                24576  1 mdio_devres
+fixed_phy              16384  1 of_mdio
+fwnode_mdio            16384  1 of_mdio
+amdgpu              18227200  31
+ucsi_ccg               40960  0
+typec_ucsi             94208  1 ucsi_ccg
+roles                  20480  1 typec_ucsi
+snd_hda_codec_atihdmi    20480  1
+typec                 135168  1 typec_ucsi
+snd_hda_codec_hdmi     61440  1 snd_hda_codec_atihdmi
+thunderbolt           622592  1 typec
+snd_hda_intel          73728  1
+uvcvideo              192512  2
+snd_usb_audio         638976  5
+snd_hda_codec         225280  3 snd_hda_codec_hdmi,snd_hda_intel,snd_hda_codec_atihdmi
+videobuf2_vmalloc      20480  1 uvcvideo
+uvc                    12288  1 uvcvideo
+videobuf2_memops       16384  1 videobuf2_vmalloc
+videobuf2_v4l2         45056  1 uvcvideo
+snd_hda_core          151552  4 snd_hda_codec_hdmi,snd_hda_intel,snd_hda_codec,snd_hda_codec_atihdmi
+snd_ump                36864  1 snd_usb_audio
+videobuf2_common       94208  4 videobuf2_vmalloc,videobuf2_v4l2,uvcvideo,videobuf2_memops
+mousedev               28672  0
+snd_usbmidi_lib        53248  1 snd_usb_audio
+snd_intel_dspcfg       49152  1 snd_hda_intel
+snd_rawmidi            57344  2 snd_usbmidi_lib,snd_ump
+asus_ec_sensors        40960  0
+snd_intel_sdw_acpi     16384  1 snd_intel_dspcfg
+amd_atl                61440  1
+videodev              425984  2 videobuf2_v4l2,uvcvideo
+snd_hwdep              24576  2 snd_usb_audio,snd_hda_codec
+snd_seq_device         20480  3 snd_seq,snd_ump,snd_rawmidi
+snd_pcm               212992  5 snd_hda_codec_hdmi,snd_hda_intel,snd_usb_audio,snd_hda_codec,snd_hda_core
+hid_glorious           12288  0
+intel_rapl_msr         24576  0
+intel_rapl_common      53248  1 intel_rapl_msr
+aesni_intel           102400  3
+uas                    32768  0
+snd_timer              57344  3 snd_seq,snd_hrtimer,snd_pcm
+onboard_usb_dev        32768  0
+mc                     98304  7 videodev,snd_usb_audio,videobuf2_v4l2,uvcvideo,videobuf2_common
+gf128mul               16384  1 aesni_intel
+snd                   163840  26 snd_seq,snd_seq_device,snd_hda_codec_hdmi,snd_hwdep,snd_hda_intel,snd_usb_audio,snd_usbmidi_lib,snd_hda_codec,snd_timer,snd_ump,snd_pcm,snd_rawmidi
+sp5100_tco             20480  0
+i2c_designware_pci     12288  1
+rapl                   24576  0
+soundcore              20480  1 snd
+watchdog               49152  1 sp5100_tco
+rtc_cmos               28672  1
+i2c_ccgx_ucsi          12288  1 i2c_designware_pci
+libphy                241664  7 r8169,mdio_devres,fwnode_mdio,of_mdio,realtek,phy_package,fixed_phy
+tiny_power_button      12288  0
+mdio_bus               28672  5 r8169,libphy,of_mdio,realtek,phy_package
+k10temp                12288  0
+button                 28672  0
+iwlmvm                622592  0
+evdev                  32768  16
+mac_hid                16384  0
+jc42                   12288  0
+eeepc_wmi              12288  0
+asus_wmi              118784  1 eeepc_wmi
+mac80211             1806336  1 iwlmvm
+battery                28672  1 asus_wmi
+i8042                  57344  1 asus_wmi
+ee1004                 16384  0
+sparse_keymap          12288  1 asus_wmi
+mxm_wmi                12288  0
+wmi_bmof               12288  0
+ptp                    61440  1 iwlmvm
+pps_core               32768  1 ptp
+libarc4                12288  1 mac80211
+iwlwifi               598016  1 iwlmvm
+kvm_amd               266240  0
+amdxcp                 12288  1 amdgpu
+drm_panel_backlight_quirks    12288  1 amdgpu
+gpu_sched              77824  1 amdgpu
+drm_buddy              12288  1 amdgpu
+ccp                   225280  1 kvm_amd
+drm_exec               20480  1 amdgpu
+drm_suballoc_helper    20480  1 amdgpu
+drm_ttm_helper         20480  2 amdgpu
+ttm                   139264  2 amdgpu,drm_ttm_helper
+cfg80211             1593344  3 iwlmvm,iwlwifi,mac80211
+kvm                  1458176  1 kvm_amd
+drm_display_helper    348160  4 amdgpu
+xt_nat                 12288  0
+x_tables               53248  10 xt_conntrack,ip6t_rpfilter,nft_compat,xt_tcpudp,xt_addrtype,xt_nat,xt_set,ipt_rpfilter,xt_pkttype,xt_MASQUERADE
+br_netfilter           36864  0
+cec                    86016  2 drm_display_helper,amdgpu
+nf_nat                 65536  3 xt_nat,nft_chain_nat,xt_MASQUERADE
+i2c_algo_bit           24576  1 amdgpu
+bridge                417792  1 br_netfilter
+video                  81920  2 asus_wmi,amdgpu
+nf_conntrack          208896  4 xt_conntrack,nf_nat,xt_nat,xt_MASQUERADE
+nct6775                45056  0
+nct6775_core           86016  1 nct6775
+wmi                    45056  4 video,asus_wmi,wmi_bmof,mxm_wmi
+atkbd                  40960  0
+nf_defrag_ipv6         24576  1 nf_conntrack
+libps2                 24576  1 atkbd
+crc16                  12288  1 amdgpu
+serio                  32768  2 atkbd,i8042
+i2c_piix4              40960  3
+nf_defrag_ipv4         12288  1 nf_conntrack
+tun                    77824  0
+hwmon_vid              12288  1 nct6775
+veth                   40960  0
+stp                    12288  1 bridge
+i2c_dev                28672  26
+rfkill                 45056  6 iwlmvm,asus_wmi,cfg80211
+loop                   45056  0
+vivaldi_fmap           12288  1 atkbd
+uinput                 28672  0
+ctr                    16384  0
+llc                    20480  2 bridge,stp
+i2c_smbus              20480  1 i2c_piix4
+irqbypass              16384  1 kvm
+fuse                  315392  3
+configfs               69632  2 thunderbolt
+zram                   77824  1
+842_decompress         16384  1 zram
+842_compress           24576  1 zram
+lz4hc_compress         20480  1 zram
+dmi_sysfs              28672  0
+xts                    16384  1
+input_leds             16384  0
+led_class              32768  5 videodev,input_leds,libphy,iwlmvm,asus_wmi
+usb_storage            94208  1 uas
+sd_mod                 94208  3
+hid_generic            12288  0
+usbhid                 94208  0
+hid                   303104  6 usbhid,hid_glorious,hid_generic
+ahci                   57344  3
+libahci                65536  1 ahci
+libata                520192  2 libahci,ahci
+nvme                   77824  1
+xhci_pci               24576  0
+nvme_core             286720  2 nvme
+scsi_mod              360448  4 sd_mod,usb_storage,uas,libata
+xhci_hcd              446464  1 xhci_pci
+nvme_keyring           20480  1 nvme_core
+nvme_auth              36864  1 nvme_core
+scsi_common            16384  5 scsi_mod,sd_mod,usb_storage,uas,libata
+btrfs                2523136  1
+libblake2b             20480  1 btrfs
+dm_crypt               69632  2
+aes                    16384  6
+cbc                    12288  0
+encrypted_keys         36864  1 dm_crypt
+dm_snapshot            77824  0
+trusted                49152  2 encrypted_keys,dm_crypt
+asn1_encoder           16384  1 trusted
+tee                    61440  1 trusted
+dm_bufio               57344  1 dm_snapshot
+dm_mod                245760  7 dm_crypt,dm_snapshot,dm_bufio
+raid6_pq              126976  1 btrfs
+xor                    28672  1 btrfs
+aead                   20480  5 dm_crypt,ccm,xfrm_algo,mac80211,aesni_intel
+efivarfs               40960  1
+autofs4                61440  0

@@ -38,7 +38,7 @@ let
   #               METADATA version bug; fixed fleet-wide by
   #               modules/shared/overlays.nix, not blocked here.
   # Verified by building the entire darwin set with `nix build --keep-going`.
-  hostBlocked = lib.optionals pkgs.stdenv.isDarwin [
+  hostBlocked = lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
     "mitmproxy"
     "netexec"
     "objection"
@@ -63,6 +63,14 @@ let
       avail [ outputs.packages.${hostPlatform.system}.palera1n ]
     else
       [ ];
+
+  offsecPython = pkgs.python3.withPackages (
+    ps: with ps; [
+      requests
+      cryptography
+      pwntools
+    ]
+  );
 
   categories = {
     # GNU tools the Linux kernel's Kbuild invokes by name. macOS ships BSD
@@ -112,6 +120,7 @@ let
         binwalk
         imhex
         capstone
+        unicorn # CPU emulator (same lineage as capstone)
         jadx
         libplist
       ]
@@ -250,15 +259,7 @@ let
         enum4linux
         responder
         metasploit
-        # BloodHound. Two of the three pieces, deliberately:
-        #   bloodhound     legacy app — x86_64-linux only, so navi only
-        #   bloodhound-ce  the CE server — linux-only, so aku/navi
-        #   bloodhound-py  EXCLUDED: it is packaging-broken in this nixpkgs pin —
-        #                  it fails its own `importlib.metadata` check on every
-        #                  platform, so it would break aku's first build. Collect
-        #                  with `nxc ldap --bloodhound` on Linux, or venv-pip
-        #                  bloodhound on the Mac if you must.
-        bloodhound
+        # BloodHound: legacy bloodhound removed upstream in modern nixpkgs (archived & Electron 11)
         bloodhound-ce
         # --- HTB / AD workflow ---
         openvpn # the lab VPN (5.5) — the part that most guides assume you have
@@ -269,6 +270,10 @@ let
         kerbrute # user enumeration and password spraying over Kerberos
         certipy # ADCS abuse, which is most modern HTB AD chains
         python3Packages.pypykatz # parse lsass dumps without Windows
+        offsecPython
+        jdk
+        curl
+        jq
         netexec # filtered out on darwin — see hostBlocked
       ]
     );
@@ -276,6 +281,8 @@ let
 in
 categories
 // {
+  inherit offsecPython;
+
   # <elf.h> as an isolated include directory.
   #
   # macOS ships no elf.h, but the Linux kernel's host tools (scripts/sorttable,

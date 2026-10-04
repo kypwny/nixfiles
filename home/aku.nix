@@ -1,6 +1,9 @@
 { ... }:
 {
-  imports = [ ./default.nix ];
+  imports = [
+    ./default.nix
+    ./wezterm.nix
+  ];
 
   home.file.".config/fastfetch/aku-logo.txt".source = ./aku-logo.txt;
 
