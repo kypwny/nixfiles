@@ -29,9 +29,6 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
     catppuccin.url = "github:catppuccin/nix";
     catppuccin.inputs.nixpkgs.follows = "nixpkgs";
-
-    gomuks.url = "git+https://git.tilde.horse/ky/gomuks.git?ref=pwny";
-    gomuks.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =

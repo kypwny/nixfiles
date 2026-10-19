@@ -73,7 +73,6 @@ in
   # macOS-specific home-manager additions
   home.packages = [
     dino-app
-    # gomuks-terminal: flake cleanSrc strips cmd/gomuks-terminal, package is broken
   ];
 
   targets.darwin.defaults."com.brave.Browser" = {

@@ -32,7 +32,6 @@ in
           hostname
           ;
         inherit (inputs) llm-agents;
-        inherit (inputs) gomuks;
       };
       homeFile =
         if builtins.pathExists (../home + "/${hostname}.nix") then
@@ -81,7 +80,6 @@ in
           hostname
           ;
         inherit (inputs) llm-agents;
-        inherit (inputs) gomuks;
       };
       homeFile =
         if builtins.pathExists (../home + "/${hostname}.nix") then
