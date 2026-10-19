@@ -94,12 +94,13 @@ in
   ];
 
   # ---- the toolset ----
-  # Same categorization as every other host. On Linux this set is *complete*:
-  # netexec, hydra, bettercap, mitmproxy, bloodhound and the real wordlists are
-  # all present, which is precisely what darwin cannot build.
+  # Daily-use Linux lab tooling stays on the guest: netexec, hydra, bettercap,
+  # mitmproxy, bloodhound and the real wordlists. JADX's Quark Engine pulls a
+  # large Python analytics closure, so leave it to `nix develop .#android` or
+  # `nix shell nixpkgs#jadx` rather than making every desktop switch build it.
   environment.systemPackages = lib.unique (
     lib.flatten [
-      toolset.re
+      (lib.remove pkgs.jadx toolset.re)
       toolset.dynamic
       toolset.ios
       toolset.kernel

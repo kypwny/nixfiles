@@ -43,10 +43,8 @@ stdenv.mkDerivation (finalAttrs: {
     homepage = "https://palera.in";
     license = lib.licenses.mit;
     sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
-    platforms = [
-      "aarch64-darwin"
-      "x86_64-darwin"
-    ];
+    # This hash/URL pins an arm64 Mach-O, not an Intel Mac binary.
+    platforms = [ "aarch64-darwin" ];
     mainProgram = "palera1n";
   };
 })

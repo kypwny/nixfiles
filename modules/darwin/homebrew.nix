@@ -27,7 +27,7 @@
     casks = [
       # sdkmanager + avdmanager. The Android emulator and its system images are
       # Google-side downloads, so the SDK cannot come from nix; this cask is the
-      # smallest way to get it. See ~/tansu/notes/android-api-re.md.
+      # smallest way to get it. See shells/docs/android-re.md.
       "android-commandlinetools"
       "affinity"
       "blackhole-2ch"

@@ -47,12 +47,24 @@
         "aarch64-darwin"
       ];
       forEachSystem = nixpkgs.lib.genAttrs systems;
+      pkgsFor = forEachSystem (system: import ./lib/mk-pkgs.nix { inherit nixpkgs system; });
+      catalogs = forEachSystem (system: import ./shells/tools.nix { pkgs = pkgsFor.${system}; });
+      shells = forEachSystem (
+        system:
+        import ./shells {
+          pkgs = pkgsFor.${system};
+          catalog = catalogs.${system};
+        }
+      );
       treefmtEval = forEachSystem (
         system: treefmt-nix.lib.evalModule nixpkgs.legacyPackages.${system} ./treefmt.nix
       );
     in
     {
-      lib = mylib;
+      lib = mylib // {
+        inherit systems;
+        toolInventory = forEachSystem (system: catalogs.${system}.manifest);
+      };
 
       nixosConfigurations = {
         kura = mylib.mkNixos {
@@ -78,93 +90,49 @@
         };
       };
 
-      # Pinned upstream binaries live here so both the modules and the CLI can
-      # reach them by one name (`nix build .#palera1n`).
-      packages = forEachSystem (system: {
-        palera1n = nixpkgs.legacyPackages.${system}.callPackage ./pkgs/palera1n.nix { };
-      });
-
+      packages = forEachSystem (system: import ./pkgs { pkgs = pkgsFor.${system}; });
+      overlays.default = import ./overlays;
       formatter = forEachSystem (system: treefmtEval.${system}.config.build.wrapper);
+      devShells = shells;
 
-      checks = forEachSystem (system: {
-        formatting = treefmtEval.${system}.config.build.check self;
-      });
-
-      devShells = forEachSystem (
+      checks = forEachSystem (
         system:
         let
-          sharedOverlays = import ./modules/shared/overlays.nix;
-          pkgs = import nixpkgs {
-            inherit system;
-            overlays = sharedOverlays.nixpkgs.overlays;
-            config.allowUnfree = true;
+          pkgs = pkgsFor.${system};
+          shellContract = import ./tests/shells.nix {
+            inherit pkgs;
+            catalog = catalogs.${system};
+            shells = shells.${system};
           };
-          inherit (nixpkgs) lib;
-
-          # Tools are categorized once in lib/toolset.nix (RedNix's packages.nix
-          # + shells/ shape) and one shell is generated per category, named
-          # plainly for what it holds. Entries the current host cannot build are
-          # filtered out there, so one definition serves both systems:
-          #   nix develop .#all       everything (this is the one to build kernels in)
-          #   nix develop .#re        reversing only
-          #   nix develop .#kernel    kernel + board tooling
-          toolset = import ./lib/toolset.nix { inherit pkgs lib outputs; };
-
-          # `system` in the toolset is a convenience list for systemPackages, not
-          # a category worth its own shell; elfHeaders is an include dir, consumed
-          # through KBUILD_ELF_INCLUDE below.
-          categories = builtins.removeAttrs toolset [
-            "system"
-            "elfHeaders"
-            "offsecPython"
-          ];
         in
         {
-          # `default` stays the nix-tooling shell it has always been.
-          default = pkgs.mkShell {
-            packages = with pkgs; [
-              nixfmt
-              nil
-              statix
-              deadnix
-              nh
-              just
-              sops
-              age
-              ssh-to-age
-            ];
-          };
-        }
-        // lib.mapAttrs' (
-          name: packages:
-          lib.nameValuePair name (
-            pkgs.mkShell {
-              inherit name packages;
-              shellHook = ''
-                echo "${name}: ${toString (builtins.length packages)} tools (tansu)"
-                echo "  lab root: ~/tansu"
+          formatting = treefmtEval.${system}.config.build.check self;
+          shell-evaluation = builtins.deepSeq shellContract (
+            pkgs.runCommand "shell-evaluation" { } "touch $out"
+          );
+          regression =
+            pkgs.runCommand "nixfiles-regression"
+              {
+                nativeBuildInputs = with pkgs; [
+                  python3
+                  bash
+                  coreutils
+                  gnugrep
+                  gnused
+                ];
+              }
               ''
-              + lib.optionalString (name == "all" || name == "offsec") ''
-                # Wordlists are data packages, so they never appear on PATH.
-                #   ffuf -w $SECLISTS/Discovery/Web-Content/raft-medium-directories.txt
-                #   hashcat ... $ROCKYOU
-                export SECLISTS="${pkgs.seclists}/share/wordlists/seclists"
-                export ROCKYOU="${pkgs.rockyou}/share/wordlists/rockyou.txt"
-                ${lib.optionalString (name == "offsec") ''
-                  # Ensure the offsec python with custom packages takes precedence over bare python
-                  export PATH="${toolset.offsecPython}/bin:$PATH"
-                ''}
-              ''
-              + lib.optionalString (name == "all" || name == "toolchain") ''
-                # Host tools in a Linux kernel build include <elf.h>, which macOS
-                # does not ship. Referencing the isolated header (rather than
-                # glibc's whole include dir) keeps it in the closure without
-                # hijacking host compiles.
-                export KBUILD_ELF_INCLUDE="${toolset.elfHeaders}/include"
+                export HOME="$TMPDIR/home"
+                export PYTHONDONTWRITEBYTECODE=1
+                mkdir -p "$HOME"
+                cd ${self}
+                python3 -m unittest discover -s tests -p 'test_*.py' -v
+                for script in shells/scripts/*.sh; do
+                  bash -n "$script"
+                done
+                touch "$out"
               '';
-            }
-          )
-        ) categories
+        }
       );
     };
 }
