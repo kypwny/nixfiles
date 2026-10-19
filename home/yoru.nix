@@ -99,11 +99,16 @@ in
   # here (identity.sshKeys.yoruEcdsa).
   home.file.".ssh/yoru.pub".text = "${identity.sshKeys.yoruEcdsa}\n";
 
-  # Offer the Secure Enclave key for every SSH connection via Secretive's agent
-  # socket, alongside the file-backed IdentityFiles from home/default.nix.
-  # Hosts that must stay file-only (evil/root entries) keep `identityAgent "none"`.
-  programs.ssh.settings."*" = {
+  # The Secure Enclave key is only for machines on the tailnet (today: kura).
+  # Everything else (GitHub, tilde.horse, root hosts) keeps its file keys from
+  # home/default.nix. ~/.ssh/ky stays second as a fallback, because an enclave
+  # key cannot be backed up and dies with this Mac.
+  programs.ssh.settings.kura = {
     identityAgent = "${config.home.homeDirectory}/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh";
+    identityFile = lib.mkForce [
+      "~/.ssh/yoru.pub"
+      "~/.ssh/ky"
+    ];
   };
 
   # Sign git commits with the Secure Enclave key. ssh-keygen only consults
