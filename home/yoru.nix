@@ -1,4 +1,10 @@
-{ pkgs, ... }:
+{
+  config,
+  pkgs,
+  identity,
+  lib,
+  ...
+}:
 let
   # Upstream nixpkgs marked dino broken on aarch64-darwin
   dino-unwrapped = pkgs.dino.overrideAttrs (old: {
@@ -65,15 +71,87 @@ in
 {
   imports = [
     ./default.nix
-    ./kitty.nix
-    ./wezterm.nix
     ./ghostty.nix
   ];
 
   # macOS-specific home-manager additions
   home.packages = [
     dino-app
+    pkgs.secretive
+    pkgs.hcli
+    pkgs.linecast
+    # Prism Launcher uses this JDK for current Minecraft releases.
+    pkgs.jdk21
   ];
+
+  # Prism 11 scans ~/Library/Java/JavaVirtualMachines for JDK bundles.  Link
+  # nixpkgs' macOS bundle there so Finder/Launchpad launches discover it too;
+  # shell-only JAVA_HOME/PATH configuration would not reach those GUI launches.
+  # A home.file key cannot retain Nix store context; only the derived bundle name
+  # drops it, while the source stays a store path and therefore remains GC-rooted.
+  home.file."Library/Java/JavaVirtualMachines/${builtins.baseNameOf (builtins.unsafeDiscardStringContext pkgs.jdk21.bundle)}".source =
+    pkgs.jdk21.bundle;
+
+  home.sessionVariables.PRISMLAUNCHER_JAVA_PATHS = "${pkgs.jdk21}/bin/java";
+
+  # Secretive (Secure Enclave) SSH key named `yoru`, created in Secretive.app.
+  # The private half never leaves the enclave; only the public half is declared
+  # here (identity.sshKeys.yoruEcdsa).
+  home.file.".ssh/yoru.pub".text = "${identity.sshKeys.yoruEcdsa}\n";
+
+  # Offer the Secure Enclave key for every SSH connection via Secretive's agent
+  # socket, alongside the file-backed IdentityFiles from home/default.nix.
+  # Hosts that must stay file-only (evil/root entries) keep `identityAgent "none"`.
+  programs.ssh.settings."*" = {
+    identityAgent = "${config.home.homeDirectory}/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh";
+  };
+
+  # Sign git commits with the Secure Enclave key. ssh-keygen only consults
+  # $SSH_AUTH_SOCK (the Apple-launched agent), which cannot see Secretive keys,
+  # so git signs through a wrapper that points it at Secretive's socket.
+  # Verification trusts both keys via ~/.ssh/allowed_signers (home/default.nix).
+  programs.git.settings.user = lib.mkForce (identity.git // { signingkey = "~/.ssh/yoru.pub"; });
+  programs.git.settings.gpg.ssh.program =
+    lib.mkForce "${pkgs.writeShellScriptBin "ssh-keygen-secretive" ''
+      export SSH_AUTH_SOCK="$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
+      exec /usr/bin/ssh-keygen "$@"
+    ''}/bin/ssh-keygen-secretive";
+
+  # Keep GnuPG policy declarative while leaving the mutable keyring in ~/.gnupg.
+  # The copied config files are replaced by Home Manager with equivalent settings.
+  programs.gpg = {
+    enable = true;
+    settings = {
+      auto-key-locate = "local";
+      cert-digest-algo = "SHA512";
+      default-key = "ky@tilde.horse";
+      default-preference-list = "SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 BZIP2 ZLIB ZIP Uncompressed";
+      display-charset = "utf-8";
+      fixed-list-mode = true;
+      keyid-format = "0xlong";
+      keyserver = "hkps://keys.openpgp.org";
+      list-options = "show-uid-validity";
+      no-comments = true;
+      no-emit-version = true;
+      no-symkey-cache = true;
+      personal-cipher-preferences = "AES256 AES192 AES";
+      personal-compress-preferences = "ZLIB BZIP2 ZIP Uncompressed";
+      personal-digest-preferences = "SHA512 SHA384 SHA256 SHA224";
+      require-cross-certification = true;
+      s2k-cipher-algo = "AES256";
+      s2k-digest-algo = "SHA512";
+      verify-options = "show-uid-validity";
+      with-fingerprint = true;
+    };
+    dirmngrSettings = {
+      keyserver = "hkps://keys.openpgp.org";
+    };
+  };
+
+  # Replace the copied text configs with the declarative equivalents above;
+  # leave private keys, public keyring and trust database untouched.
+  home.file."${config.home.homeDirectory}/.gnupg/gpg.conf".force = true;
+  home.file."${config.home.homeDirectory}/.gnupg/dirmngr.conf".force = true;
 
   targets.darwin.defaults."com.brave.Browser" = {
     # Brave features

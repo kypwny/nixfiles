@@ -210,6 +210,38 @@
     keyMode = "vi";
     escapeTime = 0;
     terminal = "tmux-256color";
+
+    # Load defaults first so the explicit settings above still win.
+    sensibleOnTop = true;
+    # Continuum must follow theme plugins: its status-right hook drives saves.
+    plugins = pkgs.lib.mkAfter [
+      {
+        plugin = pkgs.tmuxPlugins.yank;
+        extraConfig = ''
+          # Use OSC 52 over SSH when no desktop clipboard tool is available.
+          set -g @custom_copy_command 'tmux set-buffer -w -- "$(cat)"'
+          # Keep tmux's existing mouse-selection behavior.
+          set -g @yank_with_mouse 'off'
+        '';
+      }
+      {
+        plugin = pkgs.tmuxPlugins.resurrect;
+        extraConfig = ''
+          # Restore layouts manually, never restart saved applications or log panes.
+          set -g @resurrect-processes 'false'
+          set -g @resurrect-capture-pane-contents 'off'
+          set -g @resurrect-never-overwrite 'on'
+        '';
+      }
+      {
+        plugin = pkgs.tmuxPlugins.continuum;
+        extraConfig = ''
+          set -g @continuum-save-interval '15'
+          set -g @continuum-restore 'off'
+          set -g @continuum-boot 'off'
+        '';
+      }
+    ];
   };
 
   programs.zoxide = {

@@ -18,6 +18,8 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    # Yoru takes its graphics/media stack from stable for cached builds.
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.05";
     impermanence.url = "github:nix-community/impermanence";
     impermanence.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
@@ -89,6 +91,9 @@
           formatting = treefmtEval.${system}.config.build.check self;
           shell-evaluation = builtins.deepSeq shellContract (
             pkgs.runCommand "shell-evaluation" { } "touch $out"
+          );
+          host-identity = builtins.deepSeq (import ./tests/host-identity.nix { flake = self; }) (
+            pkgs.runCommand "host-identity" { } "touch $out"
           );
           regression =
             pkgs.runCommand "nixfiles-regression"
