@@ -51,7 +51,6 @@
         user = "forgejo";
         identitiesOnly = true;
         identityFile = "~/.ssh/ky";
-        proxyJump = "kura.local";
       };
       "root@tilde.horse" = {
         hostname = "tilde.horse";
@@ -64,9 +63,17 @@
         user = "ky";
         identitiesOnly = true;
         identityFile = "~/.ssh/ky";
-        # ISP blacklists tilde.horse's IP; hop through kura, which routes
-        # 65.87.7.164 via the Mullvad split tunnel.
-        proxyJump = "kura.local";
+      };
+      # Fallback for the home network, where the ISP blacklists tilde.horse's
+      # IP: hop through kura, which routes 65.87.7.164 via the Mullvad split
+      # tunnel. Direct is the default because the jump fails whenever kura
+      # isn't reachable. For the other tilde.horse hosts use `ssh -J kura <host>`.
+      "tilde.horse-via-kura" = {
+        hostname = "tilde.horse";
+        user = "ky";
+        identitiesOnly = true;
+        identityFile = "~/.ssh/ky";
+        proxyJump = "kura";
       };
       "matrix.tilde.horse" = {
         user = "root";
@@ -74,7 +81,6 @@
         identitiesOnly = true;
         identityFile = "~/.ssh/evil";
         identityAgent = "none";
-        proxyJump = "kura.local";
       };
       "pony.kyun.li" = {
         user = "root";

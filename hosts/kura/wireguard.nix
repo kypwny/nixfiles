@@ -6,8 +6,8 @@
   # is routed through the Mullvad WireGuard tunnel. Everything else — LAN,
   # Tailscale, Jellyfin, nix updates — keeps its direct br0 default route.
   #
-  # SSH from yoru then bypasses the blacklist via `ssh -J kura.local tilde.horse`
-  # (the ProxyJump blocks live in home/default.nix).
+  # From the home network, SSH from yoru bypasses the blacklist through kura:
+  # `ssh tilde.horse-via-kura` (alias in home/default.nix) or `ssh -J kura <host>`.
   #
   # The private key is NOT stored in the nix store: wg-quick reads it at
   # activation from /var/lib/wireguard/mullvad.key (root:root, 0600).
