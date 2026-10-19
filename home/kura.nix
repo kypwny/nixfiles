@@ -9,7 +9,7 @@ in
 {
   imports = [
     ./default.nix
-    ./wezterm.nix
+    ./kitty.nix
   ];
 
   home.packages =

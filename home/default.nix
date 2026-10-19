@@ -1,12 +1,11 @@
 {
   pkgs,
-  username,
+  identity,
   ...
 }:
 {
-  home.username = username;
-  home.homeDirectory =
-    if pkgs.stdenv.hostPlatform.isDarwin then "/Users/${username}" else "/home/${username}";
+  home.username = identity.user.name;
+  home.homeDirectory = identity.homeDirectory;
 
   home.stateVersion = "26.05";
 
@@ -94,7 +93,7 @@
         identityFile = "~/.ssh/ky"; # unicorn
         identitiesOnly = true;
       };
-      "aku" = {
+      "akuma" = {
         hostname = "192.168.64.2";
         user = "ky";
         identityFile = "~/.ssh/id_ed25519";
@@ -105,21 +104,13 @@
   programs.git = {
     enable = true;
     settings = {
-      user = {
-        name = "ky";
-        email = "ky@tilde.horse";
-        signingkey = "~/.ssh/ky.pub";
-      };
+      user = identity.git;
       gpg = {
         format = "ssh";
         ssh = {
           # nix-darwin leaves a stale /run/current-system ssh-keygen first on
           # PATH; pin the platform signer so commits actually get signed.
-          program =
-            if pkgs.stdenv.hostPlatform.isDarwin then
-              "/usr/bin/ssh-keygen"
-            else
-              "ssh-keygen";
+          program = if pkgs.stdenv.hostPlatform.isDarwin then "/usr/bin/ssh-keygen" else "ssh-keygen";
           allowedSignersFile = "~/.ssh/allowed_signers";
         };
       };
@@ -132,9 +123,11 @@
     };
   };
 
-  # Trust our own ssh signing key so `git log --show-signature` verifies.
+  # Trust our own ssh signing keys so `git log --show-signature` verifies:
+  # the file-backed key (old commits) and yoru's Secretive key (new commits).
   home.file.".ssh/allowed_signers".text = ''
-    ky@tilde.horse ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDw0aRfa+YINgWJP7FKsRZ+swvPOLE5cc94ZyijkZFoX
+    ${identity.allowedSigner}
+    ${identity.git.email} ${identity.sshKeys.yoruEcdsa}
   '';
 
   programs.gh = {
@@ -156,8 +149,8 @@
     historySubstringSearch.enable = true;
 
     initContent = ''
-      # Keep kitty terminfo if running inside kitty; fallback to xterm-256color otherwise
-      if [[ -z "$KITTY_WINDOW_ID" && "$TERM" != "xterm-kitty" ]]; then
+      # Preserve the configured terminal's terminfo; fallback only for unknown terminals.
+      if [[ -z "$KITTY_WINDOW_ID" && "$TERM" != "xterm-kitty" && "$TERM" != "xterm-ghostty" ]]; then
         export TERM=xterm-256color
       fi
 
@@ -184,8 +177,8 @@
 
       case "$HOST" in
         *kura*) host_color="green" ;;
-        *aku*) host_color="red" ;;
-        *yoru*|*) host_color="244" ;;
+        *akuma*) host_color="red" ;;
+        *yoru*|*) host_color="250" ;;
       esac
 
       PROMPT='$(prompt_status) %B%F{green}%n%f@%F{''${host_color}}%m%f%b %F{magenta}%~%f''${vcs_info_msg_0_} %# '

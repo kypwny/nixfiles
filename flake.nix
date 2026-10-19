@@ -41,6 +41,7 @@
     let
       outputs = self;
       mylib = import ./lib { inherit inputs outputs; };
+      inventory = import ./hosts;
       systems = [
         "x86_64-linux"
         "aarch64-linux"
@@ -62,33 +63,12 @@
     in
     {
       lib = mylib // {
-        inherit systems;
+        inherit systems inventory;
         toolInventory = forEachSystem (system: catalogs.${system}.manifest);
       };
 
-      nixosConfigurations = {
-        kura = mylib.mkNixos {
-          hostname = "kura";
-          username = "ky";
-          system = "x86_64-linux";
-        };
-        # The arm64 UTM guest on yoru: its own module set, so it does not inherit
-        # sops secrets, br0 bridges or containers meant for the physical hosts.
-        aku = mylib.mkNixos {
-          hostname = "aku";
-          username = "ky";
-          system = "aarch64-linux";
-          profile = "vm";
-        };
-      };
-
-      darwinConfigurations = {
-        yoru = mylib.mkDarwin {
-          hostname = "yoru";
-          username = "ky";
-          system = "aarch64-darwin";
-        };
-      };
+      nixosConfigurations = nixpkgs.lib.mapAttrs (_: mylib.mkNixos) inventory.nixos;
+      darwinConfigurations = nixpkgs.lib.mapAttrs (_: mylib.mkDarwin) inventory.darwin;
 
       packages = forEachSystem (system: import ./pkgs { pkgs = pkgsFor.${system}; });
       overlays.default = import ./overlays;

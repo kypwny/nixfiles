@@ -1,6 +1,6 @@
-# Single source of truth for navi's colours. Imported by NixOS modules (tty
-# palette), home-manager modules (terminals, GTK/Qt) and pkgs/psyche-gtk.
-{ lib }:
+# Single source of truth for the base16 classic-dark colours, used by akuma's
+# tty, greeter and terminal configs.
+{ ... }:
 let
   scheme = import ./classic-dark.nix;
   inherit (scheme) colors;

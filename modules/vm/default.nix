@@ -1,13 +1,13 @@
 # The VM profile — a declarative NixOS guest (UTM + Virtualization.framework).
 #
-# kura and navi use modules/nixos: physical hardware, br0 bridges, sops secrets
+# kura uses modules/nixos: physical hardware, br0 bridges, sops secrets
 # keyed to host SSH keys, containers. None of that belongs in a guest:
 # inheriting it would make activation fail (sops cannot decrypt without a
 # matching age key) or start services that have no business running here.
 #
 # So the guest gets its own small, explicit module set, built from the same
-# modules/shared base and the same lib/toolset.nix as yoru and navi. That is the
-# whole point: one definition of the tools, three hosts.
+# modules/shared base and the same research catalog as yoru's shells (via
+# lib/toolset.nix).
 #
 # The tradeoff is a little duplication (the user/sudo/ssh block below mirrors
 # modules/nixos/users.nix and security.nix). Kept separate on purpose — the

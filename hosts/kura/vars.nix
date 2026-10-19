@@ -1,6 +1,7 @@
+{ identity }:
 let
-  adminUser = "ky";
-  adminHome = "/home/${adminUser}";
+  adminUser = identity.user.name;
+  adminHome = identity.homeDirectory;
   repoRoot = "${adminHome}/nixfiles";
   stateVersion = "26.05";
   lanPrefixLength = 24;
@@ -8,22 +9,23 @@ let
 in
 {
   host = {
-    name = "kura";
-    system = "x86_64-linux";
+    name = identity.hostname;
     inherit stateVersion;
   };
 
   user = {
     name = adminUser;
     group = "users";
-    uid = 1000;
+    uid = identity.user.uid;
     gid = 100;
     home = adminHome;
     authorizedKeys = [
       # unicorn (~/.ssh/ky on yoru) — the primary from now on
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDw0aRfa+YINgWJP7FKsRZ+swvPOLE5cc94ZyijkZFoX unicorn"
+      identity.sshKeys.unicorn
       # pwny (~/.ssh/id_ed25519) — legacy; drop once unicorn is confirmed working
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILrGOBlnxXx7U52BuS+M2swzKufwu1A76RyjfHK8w48A pwny"
+      identity.sshKeys.pwny
+      # yoru's Secretive Secure Enclave key (public half in identity.nix)
+      identity.sshKeys.yoruEcdsa
     ];
     passwordlessSudo = true;
   };
@@ -32,6 +34,8 @@ in
     bridge = "br0";
     primaryInterface = "enp1s0";
     prefixLength = lanPrefixLength;
+    # Reach the home LAN through kura without installing Tailscale on each device.
+    tailscaleSubnetRoutes = [ "192.168.67.0/${toString lanPrefixLength}" ];
     # DHCP: no hostAddress/hostCidr/hostDns here. The shared networking
     # module sees their absence and sets the br0 profile to ipv4 "auto".
     # Resolve the host from other machines as kura.local (Avahi/mDNS) or via

@@ -1,10 +1,16 @@
 {
+  config,
+  lib,
   username ? "ky",
   ...
 }:
 {
   system.primaryUser = username;
   system.stateVersion = 5;
+
+  # macOS publishes this name through its native Bonjour/mDNSResponder daemon.
+  networking.localHostName = lib.mkDefault config.networking.hostName;
+  networking.computerName = lib.mkDefault config.networking.hostName;
 
   system.defaults = {
     dock = {

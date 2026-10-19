@@ -1,7 +1,7 @@
-{ ... }:
+{ lib, identity, ... }:
 
 let
-  vars = import ./vars.nix;
+  vars = import ./vars.nix { inherit identity; };
 in
 {
   _module.args.vars = vars;
@@ -20,24 +20,14 @@ in
     ../../modules/nixos/containers/qbittorrent.nix
   ];
 
-  # kura lives on DHCP behind a double-NAT router. Announce kura.local over
-  # mDNS so LAN machines (macOS resolves .local natively) can reach it without
-  # knowing the leased address.
-  services.avahi = {
-    enable = true;
-    nssmdns4 = true;
-    openFirewall = true; # UDP 5353
-    publish = {
-      enable = true;
-      addresses = true;
-    };
-  };
-
-  # Out-of-band access through the double NAT via the tailnet; also provides
-  # kura as a MagicDNS name. Authenticate once after rebuild with:
-  #   sudo tailscale up
+  # Out-of-band access and home-LAN subnet routing, without changing the BPI-R3.
+  # Authenticate after activation and approve the advertised route in the tailnet.
   services.tailscale = {
     enable = true;
     openFirewall = true;
+    useRoutingFeatures = "server";
+    extraSetFlags = [
+      "--advertise-routes=${lib.concatStringsSep "," vars.network.tailscaleSubnetRoutes}"
+    ];
   };
 }

@@ -34,4 +34,8 @@
       }
     ];
   };
+
+  # A fresh deployment may not have the private key provisioned yet. Leave the
+  # optional split tunnel offline rather than failing an unrelated activation.
+  systemd.services.wg-quick-mullvad.unitConfig.ConditionPathExists = "/var/lib/wireguard/mullvad.key";
 }
