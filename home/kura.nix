@@ -19,8 +19,6 @@ in
     ]
     ++ (with llmAgentsPkgs; [
       omp
-      openskills
       skills
-      skills-installer
     ]);
 }
