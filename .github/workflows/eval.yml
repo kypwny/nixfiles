@@ -1,36 +1,49 @@
-name: "Evaluate Configurations"
+name: Evaluate and test
 
 on:
   pull_request:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
-  eval-kura:
+  evaluate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
       - uses: DeterminateSystems/magic-nix-cache-action@main
-      - name: Evaluate Kura
-        run: nix eval .#nixosConfigurations.kura.config.system.build.toplevel.drvPath
+      - name: Evaluate all declared shell/platform pairs and supported package outputs
+        run: nix flake check --no-build --all-systems --no-write-lock-file
+      - name: Evaluate every declared NixOS host
+        run: >-
+          nix eval --no-write-lock-file --json .#nixosConfigurations
+          --apply 'hosts: builtins.mapAttrs (_: host: host.config.system.build.toplevel.drvPath) hosts'
+      - name: Evaluate every declared Darwin host
+        run: >-
+          nix eval --no-write-lock-file --json .#darwinConfigurations
+          --apply 'hosts: builtins.mapAttrs (_: host: host.config.system.build.toplevel.drvPath) hosts'
+      - name: Assert host identities and unchanged key memberships
+        run: >-
+          nix eval --impure --json --expr
+          'import ./tests/host-identity.nix { flake = builtins.getFlake (toString ./.); }'
+      - name: Assert Akuma desktop declarations
+        run: >-
+          nix eval --impure --json --expr
+          'import ./tests/akuma-desktop.nix { flake = builtins.getFlake (toString ./.); }'
+      - name: Build native evaluation and regression checks
+        run: nix build --no-link --no-write-lock-file .#checks.x86_64-linux.shell-evaluation .#checks.x86_64-linux.regression
 
-  eval-yoru:
-    runs-on: ubuntu-latest
+  portable-helpers:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@main
-      - uses: DeterminateSystems/magic-nix-cache-action@main
-      - name: Evaluate Yoru
-        run: nix eval .#darwinConfigurations.yoru.system.drvPath
-
-  eval-aku:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@main
-      - uses: DeterminateSystems/magic-nix-cache-action@main
-      - name: Evaluate Aku
-        run: nix eval .#nixosConfigurations.aku.config.system.build.toplevel.drvPath
-
+      - name: Run isolated helper regression tests
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          python3 -m unittest discover -s tests -p 'test_*.py' -v
+          for script in shells/scripts/*.sh; do bash -n "$script"; done

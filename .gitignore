@@ -20,3 +20,16 @@ __pycache__/
 # OS / Editor / Direnv
 .DS_Store
 .direnv/
+
+# Research data belongs in the external workspace, never in this configuration repo.
+/work/
+/artifacts/
+*.apk
+*.ipa
+*.ipsw
+*.pcap
+*.pcapng
+*.ovpn
+*.qcow2
+*.vdi
+*.vmdk

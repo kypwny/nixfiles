@@ -21,9 +21,18 @@ build:
         nh os build .
     fi
 
-# Run checks across all systems
+# Evaluate every advertised platform; build checks only for the native platform
 check:
-    nix flake check
+    nix flake check --no-build --all-systems --no-write-lock-file
+    nix flake check --no-write-lock-file
+
+# Run the shell helper tests
+test:
+    python3 -m unittest discover -s tests -p 'test_*.py' -v
+
+# Show the selected platform's included/omitted tool inventory
+shells system=`nix eval --impure --raw --expr builtins.currentSystem`:
+    nix eval --no-write-lock-file --json .#lib.toolInventory.{{system}}
 
 # Format all code
 fmt:
