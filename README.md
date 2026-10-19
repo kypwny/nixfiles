@@ -35,9 +35,9 @@ For example, QEMU is available in `.#kernel` but is not installed in Yoru's
 default system package set (UTM is the usual VM runtime there).
 ImHex uses nixpkgs on Darwin and Linux; it remains available in the `.#re` shell.
 Yoru keeps research suites out of its always-installed package set; use these
-focused shells when you need them; Ghidra and ImHex remain installed. Its
-graphics/media stack (HarfBuzz, libjxl, FFmpeg, ImageMagick, vips, mpv) comes
-from nixos-26.05 so it is fetched from the binary cache instead of rebuilt.
+focused shells when you need them; Ghidra and ImHex remain installed.
+Yoru uses plain nixpkgs packages with no overrides so its closure comes from
+cache.nixos.org; Linux-only build trims in `overlays/` do not apply to it.
 
 **Working with new Nix files:** Git-backed flake references only include files
 known to Git. Before using normal shell or host commands, add each new source

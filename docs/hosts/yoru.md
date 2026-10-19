@@ -25,8 +25,9 @@ QEMU is available via `nix develop .#kernel`; UTM is the usual VM runtime on Yor
 ImHex is installed from nixpkgs on Yoru and remains available in the research
 shell on supported platforms. SDKs, Xcode and KDKs remain separate prerequisites;
 no current installation or successful native shell-build claim is made here.
-Yoru disables only the upstream HarfBuzz and libjxl test suites during local
-package builds; runtime support remains enabled, and other hosts keep their checks.
+Yoru takes nixpkgs packages as-is so they come from cache.nixos.org. Overrides
+that change a library's hash (like the Linux-only libtiff trim in `overlays/`)
+would force everything built on top of it to compile locally.
 Linecast 2.9.2 is installed from the pinned nixpkgs unstable package through
 Home Manager (`home/yoru.nix`), not Homebrew.
 

@@ -109,9 +109,14 @@ in
   # ltrace test suite fails in sandbox/VM environments; binary is fine.
   ltrace = prev.ltrace.overrideAttrs { doCheck = false; };
 
+}
+// prev.lib.optionalAttrs prev.stdenv.hostPlatform.isLinux {
   # libtiff's bundled Sphinx manual is not required by any fleet runtime.
   # Skipping it prevents Pillow (needed by NetExec's RDP support) from
   # pulling a second Python/mypy toolchain into the akuma closure.
+  # Linux only: on yoru it would change the hash of everything above libtiff
+  # (fonts, cairo, gobject-introspection, gdk-pixbuf, pango, Pillow) and force
+  # all of it to build locally instead of coming from cache.nixos.org.
   libtiff = prev.libtiff.overrideAttrs (old: {
     outputs = builtins.filter (output: output != "doc" && output != "man") old.outputs;
     nativeBuildInputs = builtins.filter (pkg: pkg != prev.sphinx) old.nativeBuildInputs;

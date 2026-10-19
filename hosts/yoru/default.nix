@@ -1,12 +1,4 @@
-{
-  pkgs,
-  identity,
-  inputs,
-  ...
-}:
-let
-  stablePkgs = inputs.nixpkgs-stable.legacyPackages.${pkgs.stdenv.hostPlatform.system};
-in
+{ pkgs, identity, ... }:
 {
   networking.hostName = identity.hostname;
 
@@ -15,22 +7,6 @@ in
   environment.systemPackages = [
     pkgs.ghidra
     pkgs.imhex
-  ];
-
-  # Use cached outputs from the stable package set for the shared graphics and
-  # media stack. In particular, keep ffmpeg paired with the HarfBuzz it was built
-  # against instead of changing its dependency via a host-wide doCheck override.
-  nixpkgs.overlays = [
-    (_: _prev: {
-      inherit (stablePkgs)
-        harfbuzz
-        libjxl
-        ffmpeg
-        imagemagick
-        vips
-        mpv
-        ;
-    })
   ];
 
   # Nix-managed launchd daemon and CLI; authenticate once with sudo tailscale up.
