@@ -6,6 +6,8 @@
   ...
 }:
 let
+  secretiveAgent = "${config.home.homeDirectory}/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh";
+
   # Upstream nixpkgs marked dino broken on aarch64-darwin
   dino-unwrapped = pkgs.dino.overrideAttrs (old: {
     doCheck = false;
@@ -99,16 +101,21 @@ in
   # here (identity.sshKeys.yoruEcdsa).
   home.file.".ssh/yoru.pub".text = "${identity.sshKeys.yoruEcdsa}\n";
 
-  # The Secure Enclave key is only for machines on the tailnet (today: kura).
-  # Everything else (GitHub, tilde.horse, root hosts) keeps its file keys from
-  # home/default.nix. ~/.ssh/ky stays second as a fallback, because an enclave
-  # key cannot be backed up and dies with this Mac.
+  # The Secure Enclave key is for machines on the tailnet (today: kura) and the
+  # Forgejo at git.tilde.horse, which only trusts this key. Everything else
+  # (GitHub, tilde.horse, root hosts) keeps its file keys from home/default.nix.
+  # On kura ~/.ssh/ky stays second as a fallback, because an enclave key cannot
+  # be backed up and dies with this Mac.
   programs.ssh.settings.kura = {
-    identityAgent = "${config.home.homeDirectory}/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh";
+    identityAgent = secretiveAgent;
     identityFile = lib.mkForce [
       "~/.ssh/yoru.pub"
       "~/.ssh/ky"
     ];
+  };
+  programs.ssh.settings."git.tilde.horse" = {
+    identityAgent = secretiveAgent;
+    identityFile = lib.mkForce "~/.ssh/yoru.pub";
   };
 
   # Sign git commits with the Secure Enclave key. ssh-keygen only consults
