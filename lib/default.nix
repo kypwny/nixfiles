@@ -16,7 +16,7 @@ in
       username ? "ky",
       system ? "x86_64-linux",
       # Which module set defines the host:
-      #   "server" — kura/navi: physical hardware, br0 bridges, sops secrets keyed
+      #   "server" — kura: physical hardware, br0 bridges, sops secrets keyed
       #              to host SSH keys, containers.
       #   "vm"     — a guest (aku): UEFI + virtio boot, no secrets, and none of
       #              the physical hosts' services.

@@ -183,7 +183,6 @@
       }
 
       case "$HOST" in
-        *navi*) host_color="blue" ;;
         *kura*) host_color="green" ;;
         *aku*) host_color="red" ;;
         *yoru*|*) host_color="244" ;;

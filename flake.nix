@@ -30,9 +30,6 @@
     catppuccin.url = "github:catppuccin/nix";
     catppuccin.inputs.nixpkgs.follows = "nixpkgs";
 
-    # Pinned CachyOS kernel tree and binaries for navi.
-    nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
-
     gomuks.url = "git+https://git.tilde.horse/ky/gomuks.git?ref=pwny";
     gomuks.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -63,11 +60,6 @@
       nixosConfigurations = {
         kura = mylib.mkNixos {
           hostname = "kura";
-          username = "ky";
-          system = "x86_64-linux";
-        };
-        navi = mylib.mkNixos {
-          hostname = "navi";
           username = "ky";
           system = "x86_64-linux";
         };
