@@ -69,7 +69,6 @@
       "qbittorrent"
       "roblox"
       "signal"
-      "simplex"
       "steam"
       "telegram"
       "tor-browser"
