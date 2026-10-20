@@ -7,6 +7,8 @@ let
     # Secretive Secure Enclave key named `yoru` on yoru (public half only; the
     # private half never leaves the enclave and cannot be exported).
     yoruEcdsa = "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBKqitIfqaJ3cCYvqBrCn5AjkYOlkdw+706foxEHnwL/mP38nS59v6vJV3LIAojEgDzlUF6c2z+FFMsMoMvSmE3c= yoru@secretive.yoru.local";
+    # The one key allowed to SSH into yoru, over the tailnet only.
+    yoruLogin = "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBM01ry/NcHpDTNGz0kkmtj11FsY8NvbAEX7fRfmQOfy9rAaJ4ZY/5EZJehSuJC1PvGTDf6YP1tZhqCf+fW/HgpA=";
   };
   git = {
     name = "ky";
