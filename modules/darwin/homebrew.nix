@@ -1,10 +1,13 @@
 {
   homebrew = {
     enable = true;
+    # Refresh the index and upgrade outdated formulae/casks on every switch, so
+    # Homebrew-installed apps get security fixes (they otherwise stay at the
+    # version first installed). Makes `just switch` slower and less repeatable.
     onActivation = {
-      autoUpdate = false;
+      autoUpdate = true;
       cleanup = "zap";
-      upgrade = false;
+      upgrade = true;
     };
 
     taps = [
