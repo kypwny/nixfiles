@@ -101,9 +101,10 @@ in
   # here (identity.sshKeys.yoruEcdsa).
   home.file.".ssh/yoru.pub".text = "${identity.sshKeys.yoruEcdsa}\n";
 
-  # The Secure Enclave key is for machines on the tailnet (today: kura) and the
-  # Forgejo at git.tilde.horse, which only trusts this key. Everything else
-  # (GitHub, tilde.horse, root hosts) keeps its file keys from home/default.nix.
+  # The Secure Enclave key is for machines on the tailnet (today: kura), the
+  # Forgejo at git.tilde.horse, which only trusts this key, and plate (OpenBSD,
+  # root, no file-key fallback). Everything else (GitHub, tilde.horse, other
+  # root hosts) keeps its file keys from home/default.nix.
   # On kura ~/.ssh/ky stays second as a fallback, because an enclave key cannot
   # be backed up and dies with this Mac.
   programs.ssh.settings.kura = {
@@ -116,6 +117,15 @@ in
   programs.ssh.settings."git.tilde.horse" = {
     identityAgent = secretiveAgent;
     identityFile = lib.mkForce "~/.ssh/yoru.pub";
+  };
+  # plate.odin.slowservers.net. Its authorized_keys (managed by hand, not by
+  # this flake) holds yoruEcdsa and yoruLogin only.
+  programs.ssh.settings.plate = {
+    hostname = "142.249.45.39";
+    user = "root";
+    identitiesOnly = true;
+    identityAgent = secretiveAgent;
+    identityFile = "~/.ssh/yoru.pub";
   };
 
   # Sign git commits with the Secure Enclave key. ssh-keygen only consults
