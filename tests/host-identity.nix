@@ -168,7 +168,13 @@ assert inventory == expected;
       else
         h.programs.git.settings.gpg.ssh.program == "ssh-keygen"
     );
-    assert c.services.openssh.enable;
+    # yoru turns Apple's all-interfaces sshd off and runs a tailnet-only one.
+    assert
+      if darwin then
+        c.services.openssh.enable == false
+        && builtins.elem "ListenAddress=100.102.52.1" c.launchd.daemons.sshd-tailnet.serviceConfig.ProgramArguments
+      else
+        c.services.openssh.enable;
     assert
       darwin
       || (
